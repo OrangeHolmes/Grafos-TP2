@@ -1,36 +1,72 @@
-#ifndef _LISTATWEETS
-#define _LISTATWEETS
+#ifndef LISTA_LISTAS
+#define LISTA_LISTAS
 #include<iostream>
 using namespace std;
-class Lista {
-   class Celda;    // Prototipo
-   private:
-      Celda * primera;
-	    Celda * ultima;
-      class Celda{
-	     public:
-        char * usuario;
-  		  int cantidadMenciones; // Nos va a ayudar a llevar un conteo de la cantidad de veces que un usuario ha sido mencionado por otro
-  			Celda * anterior;
-  			Celda * siguiente;
-  			Cekda * abajo;
-  			Celda( char* , int );
-        void liberadorColumnas();
-  			~Celda();
-  			ostream & imprimir( ostream &);
-	     };
+
+class ListaVertices {	//LISTA DE VERTICES
+	class Vertice;    // Prototipo de VERTICE
+
+private:
+	Vertice * primer;
+	Vertice * ultimo;
+	int contVertices;
+	class Vertice { // VERTICE
+		class ListaAristas; //Prototipo de LISTA DE ARISTAS
+
 	public:
-		Lista();
-		~Lista();
-		Lista & pushFront(char *, int);
-		Lista & pushBack(char *, int);
-    int vacia();
-    int compararNombres(char *, char *);
-    int existeEscritor(char *, char *);
-    int existeMencion(char *, char *);
-    Lista & insertar(char *, int);
-    Lista & insertarMencion(char *, char *);
-    void ordenarLista();
-		ostream & imprimir( ostream & );
+		Vertice * anterior;
+		Vertice * siguiente;
+		string etiqueta;
+		ListaAristas * sublista;
+		Vertice();
+		Vertice(string);
+  		~Vertice();
+  		ostream & imprimir( ostream &);
+
+		class ListaAristas {  //LISTA DE ARISTAS
+			class Arista; // ARISTA
+
+		public:
+			Arista * primera;
+			Arista * ultima;
+			int contAristas;
+			ListaAristas();
+			~ListaAristas();
+
+			class Arista {
+			public:
+				Arista * anterior;
+				Arista * siguiente;
+				Vertice * vertice;
+				int valArista;
+				Arista();
+				Arista(Vertice*,int);
+				~Arista();
+			};
+		};
+	};
+public:
+	ListaVertices();
+	~ListaVertices();
+	void vaciar();
+	void agregarVertice(string);
+	void eliminarVertice(Vertice*);
+	void modificarVertice(Vertice*, string);
+	string getEtiqueta(Vertice*);
+	void agregarArista(Vertice*, Vertice*,int);
+	void eliminarArista(Vertice*, Vertice*);
+	void modificarPeso(Vertice*, Vertice*, int);
+	int peso(Vertice*, Vertice*);
+	Vertice * primerVertice();
+	Vertice * siguienteVertice(Vertice*);
+	Vertice * primerVerticeAdyacente(Vertice*);
+	Vertice * siguienteVerticeAdyacente(Vertice*, Vertice*);
+	int existeArista(Vertice*, Vertice*);
+	int numAristas(Vertice*);
+	int numVertices();
+	int numVerticesAdyacentes(Vertice*);
+
+	ostream & imprimir( ostream & );
+	
 };
 #endif
