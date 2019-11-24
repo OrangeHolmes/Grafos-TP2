@@ -5,7 +5,6 @@ using namespace std;
 
 class ListaVertices {	//LISTA DE VERTICES
 	class Vertice;    // Prototipo de VERTICE
-
 private:
 	Vertice * primer;
 	Vertice * ultimo;
@@ -32,6 +31,7 @@ private:
 			int contAristas;
 			ListaAristas();
 			~ListaAristas();
+			Arista* buscarArista(Vertice*);
 
 			class Arista {
 			public:
@@ -49,18 +49,18 @@ public:
 	ListaVertices();
 	~ListaVertices();
 	void vaciar();
-	void agregarVertice(string);
+	Vertice* agregarVertice(string);
 	void eliminarVertice(Vertice*);
 	void modificarVertice(Vertice*, string);
 	string getEtiqueta(Vertice*);
-	void agregarArista(Vertice*, Vertice*,int);
+	Vertice::ListaAristas::Arista* agregarArista(Vertice*, Vertice*,int);
 	void eliminarArista(Vertice*, Vertice*);
 	void modificarPeso(Vertice*, Vertice*, int);
 	int peso(Vertice*, Vertice*);
 	Vertice * primerVertice();
 	Vertice * siguienteVertice(Vertice*);
-	Vertice * primerVerticeAdyacente(Vertice*);
-	Vertice * siguienteVerticeAdyacente(Vertice*, Vertice*);
+	Vertice::ListaAristas::Arista * primerVerticeAdyacente(Vertice*);
+	Vertice::ListaAristas::Arista * siguienteVerticeAdyacente(Vertice*, Vertice*);
 	int existeArista(Vertice*, Vertice*);
 	int numAristas(Vertice*);
 	int numVertices();
