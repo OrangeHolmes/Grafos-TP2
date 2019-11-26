@@ -13,7 +13,6 @@ private:
 		class ListaAristas; //Prototipo de LISTA DE ARISTAS
 
 	public:
-		Vertice * anterior;
 		Vertice * siguiente;
 		string etiqueta;
 		ListaAristas * sublista;
@@ -35,12 +34,11 @@ private:
 
 			class Arista {
 			public:
-				Arista * anterior;
 				Arista * siguiente;
 				Vertice * vertice;
-				int valArista;
+				double valArista;
 				Arista();
-				Arista(Vertice*,int);
+				Arista(Vertice*,double);
 				~Arista();
 			};
 		};
@@ -53,19 +51,18 @@ public:
 	void eliminarVertice(Vertice*);
 	void modificarVertice(Vertice*, string);
 	string getEtiqueta(Vertice*);
-	Vertice::ListaAristas::Arista* agregarArista(Vertice*, Vertice*,int);
+	Vertice::ListaAristas::Arista* agregarArista(Vertice*, Vertice*,double);
 	void eliminarArista(Vertice*, Vertice*);
-	void modificarPeso(Vertice*, Vertice*, int);
-	int peso(Vertice*, Vertice*);
+	void modificarPeso(Vertice*, Vertice*, double);
+	double peso(Vertice*, Vertice*);
 	Vertice * primerVertice();
 	Vertice * siguienteVertice(Vertice*);
 	Vertice::ListaAristas::Arista * primerVerticeAdyacente(Vertice*);
 	Vertice::ListaAristas::Arista * siguienteVerticeAdyacente(Vertice*, Vertice*);
 	int existeArista(Vertice*, Vertice*);
-	int numAristas(Vertice*);
+	int numAristas();
 	int numVertices();
 	int numVerticesAdyacentes(Vertice*);
-
 	ostream & imprimir( ostream & );
 	
 };

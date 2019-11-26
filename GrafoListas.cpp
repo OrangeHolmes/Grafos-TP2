@@ -1,21 +1,18 @@
 #include "GrafoListas.h"
 
 ListaVertices::Vertice::ListaAristas::Arista::Arista() {
-	anterior = 0;
 	siguiente = 0;
 	vertice = 0;
 	valArista = 0;
 }
 
-ListaVertices::Vertice::ListaAristas::Arista::Arista(Vertice * dest, int peso) {
-	anterior = 0;
+ListaVertices::Vertice::ListaAristas::Arista::Arista(Vertice * dest, double peso) {
 	siguiente = 0;
 	vertice = dest;
 	valArista = peso;
 }
 
 ListaVertices::Vertice::ListaAristas::Arista::~Arista() {
-	anterior = 0;
 	vertice = 0;
 	if (siguiente) {
 		delete siguiente;
@@ -53,21 +50,18 @@ ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::Vertice::ListaArist
 }
 
 ListaVertices::Vertice::Vertice() {
-	anterior = 0;
 	siguiente = 0;
 	etiqueta = "";
 	sublista = new Vertice::ListaAristas();
 }
 
 ListaVertices::Vertice::Vertice(string etiq) {
-	anterior = 0;
 	siguiente = 0;
 	etiqueta = etiq;
 	sublista = new Vertice::ListaAristas();
 }
 
 ListaVertices::Vertice::~Vertice() {
-	anterior = 0;
 	if (sublista) {
 		delete sublista;
 	}
@@ -93,7 +87,6 @@ ListaVertices::~ListaVertices() {
 ListaVertices::Vertice* ListaVertices::agregarVertice(string etiqueta){
 	Vertice * nueva = new Vertice(etiqueta);
 	if(ultimo) {
-		nueva->anterior = ultimo;
 		ultimo->siguiente = nueva;
 	}
 	else {
@@ -105,11 +98,21 @@ ListaVertices::Vertice* ListaVertices::agregarVertice(string etiqueta){
 }
 
 void ListaVertices::eliminarVertice(Vertice* victima) {
-	if (victima->anterior) {
-		victima->anterior->siguiente = victima->siguiente;
+	Vertice* actual = primerVertice();
+	if (victima == primer) {
+		primer = victima->siguiente;
+		if (victima == ultimo) {
+			ultimo = 0;
+		}
 	}
-	if (victima->siguiente) {
-		victima->siguiente->anterior = victima->anterior;
+	else {
+		while(actual->siguiente && actual->siguiente->etiqueta.compare(victima->etiqueta) != 0) {
+			actual = actual->siguiente;
+		}
+		actual->siguiente = victima->siguiente;
+		if (victima == ultimo) {
+			ultimo = actual;
+		}
 	}
 	victima->siguiente = 0;
 	delete victima;
@@ -127,12 +130,11 @@ string ListaVertices::getEtiqueta(Vertice* actual) {
 	return actual->etiqueta;
 }
 
-ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Vertice* origen, Vertice* dest, int peso) {
+ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Vertice* origen, Vertice* dest, double peso) {
 	ListaVertices::Vertice::ListaAristas::Arista* nueva = new ListaVertices::Vertice::ListaAristas::Arista(dest,peso);
 	ListaVertices::Vertice::ListaAristas::Arista* simet = new ListaVertices::Vertice::ListaAristas::Arista(origen, peso);
 	if (origen->sublista->primera) {
 		origen->sublista->ultima->siguiente = nueva;
-		nueva->anterior = origen->sublista->ultima;
 	}
 	else {
 		origen->sublista->primera = nueva;
@@ -142,7 +144,6 @@ ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Verti
 
 	if (dest->sublista->primera) {
 		dest->sublista->ultima->siguiente = simet;
-		simet->anterior = dest->sublista->ultima;
 	}
 	else {
 		dest->sublista->primera = simet;
@@ -155,33 +156,54 @@ ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Verti
 void ListaVertices::eliminarArista(Vertice* origen, Vertice* dest) {
 	Vertice::ListaAristas::Arista* victima = origen->sublista->buscarArista(dest);
 	Vertice::ListaAristas::Arista* victimaSimet = dest->sublista->buscarArista(origen);
-	if (victima->anterior) {
-		victima->anterior->siguiente = victima->siguiente;
+	Vertice::ListaAristas::Arista* actual = origen->sublista->primera;
+
+	if (victima == origen->sublista->primera) {
+		origen->sublista->primera  = victima->siguiente;
+		if (victima == origen->sublista->ultima) {
+			origen->sublista->ultima = 0;
+		}
 	}
-	if (victima->siguiente) {
-		victima->siguiente->anterior = victima->anterior;
+	else {
+		while (actual->siguiente && actual->siguiente->vertice != dest) {
+			actual = actual->siguiente;
+		}
+		actual->siguiente = victima->siguiente;
+		if (victima == origen->sublista->ultima) {
+			origen->sublista->ultima = actual;
+		}
 	}
 	victima->siguiente = 0;
 	delete victima;
 
-	if (victimaSimet->anterior) {
-		victimaSimet->anterior->siguiente = victimaSimet->siguiente;
+	actual = dest->sublista->primera;
+	if (victimaSimet == dest->sublista->primera) {
+		dest->sublista->primera = victimaSimet->siguiente;
+		if (victimaSimet == dest->sublista->ultima) {
+			dest->sublista->ultima = 0;
+		}
 	}
-	if (victimaSimet->siguiente) {
-		victimaSimet->siguiente->anterior = victimaSimet->anterior;
+	else {
+		while (actual->siguiente && actual->siguiente->vertice != origen) {
+			actual = actual->siguiente;
+		}
+		actual->siguiente = victimaSimet->siguiente;
+		if (victimaSimet == dest->sublista->ultima) {
+			dest->sublista->ultima = actual;
+		}
 	}
 	victimaSimet->siguiente = 0;
 	delete victimaSimet;
 }
 
-void ListaVertices::modificarPeso(Vertice* origen, Vertice * dest, int peso) {
+void ListaVertices::modificarPeso(Vertice* origen, Vertice * dest, double peso) {
 	Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(dest);
 	Vertice::ListaAristas::Arista* pAristaSimet = dest->sublista->buscarArista(origen);
 	pArista->valArista = peso;
 	pAristaSimet->valArista = peso;
 }
 
-int ListaVertices::peso(Vertice* origen, Vertice* dest) {
+double ListaVertices::peso(Vertice* origen, Vertice* dest) {
 	Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(dest);
 	return pArista->valArista;
 }
@@ -208,8 +230,14 @@ int ListaVertices::existeArista(Vertice* origen, Vertice* dest) {
 	return (pArista) ? 1 : 0;
 }
 
-int ListaVertices::numAristas(Vertice* origen) { //Sera numAristas del grafo?
-	return origen->sublista->contAristas;
+int ListaVertices::numAristas() {
+	Vertice* actual = primerVertice();
+	int acumAristas = 0;
+	while (actual) {
+		acumAristas += numVerticesAdyacentes(actual);
+		actual = siguienteVertice(actual);
+	}
+	return acumAristas;
 }
 
 int ListaVertices::numVertices() {
@@ -217,7 +245,7 @@ int ListaVertices::numVertices() {
 }
 
 int ListaVertices::numVerticesAdyacentes(Vertice* origen) {
-	return numAristas(origen);
+	return origen->sublista->contAristas;
 }
 ////////////VAMOS TIIM
 
