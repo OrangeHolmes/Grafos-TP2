@@ -129,6 +129,7 @@ string ListaVertices::getEtiqueta(Vertice* actual) {
 
 ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Vertice* origen, Vertice* dest, int peso) {
 	ListaVertices::Vertice::ListaAristas::Arista* nueva = new ListaVertices::Vertice::ListaAristas::Arista(dest,peso);
+	ListaVertices::Vertice::ListaAristas::Arista* simet = new ListaVertices::Vertice::ListaAristas::Arista(origen, peso);
 	if (origen->sublista->primera) {
 		origen->sublista->ultima->siguiente = nueva;
 		nueva->anterior = origen->sublista->ultima;
@@ -138,11 +139,22 @@ ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Verti
 	}
 	origen->sublista->ultima = nueva;
 	++origen->sublista->contAristas;
+
+	if (dest->sublista->primera) {
+		dest->sublista->ultima->siguiente = simet;
+		simet->anterior = dest->sublista->ultima;
+	}
+	else {
+		dest->sublista->primera = simet;
+	}
+	dest->sublista->ultima = simet;
+	++dest->sublista->contAristas;
 	return nueva;
 }
 
 void ListaVertices::eliminarArista(Vertice* origen, Vertice* dest) {
 	Vertice::ListaAristas::Arista* victima = origen->sublista->buscarArista(dest);
+	Vertice::ListaAristas::Arista* victimaSimet = dest->sublista->buscarArista(origen);
 	if (victima->anterior) {
 		victima->anterior->siguiente = victima->siguiente;
 	}
@@ -151,11 +163,22 @@ void ListaVertices::eliminarArista(Vertice* origen, Vertice* dest) {
 	}
 	victima->siguiente = 0;
 	delete victima;
+
+	if (victimaSimet->anterior) {
+		victimaSimet->anterior->siguiente = victimaSimet->siguiente;
+	}
+	if (victimaSimet->siguiente) {
+		victimaSimet->siguiente->anterior = victimaSimet->anterior;
+	}
+	victimaSimet->siguiente = 0;
+	delete victimaSimet;
 }
 
 void ListaVertices::modificarPeso(Vertice* origen, Vertice * dest, int peso) {
 	Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(dest);
+	Vertice::ListaAristas::Arista* pAristaSimet = dest->sublista->buscarArista(origen);
 	pArista->valArista = peso;
+	pAristaSimet->valArista = peso;
 }
 
 int ListaVertices::peso(Vertice* origen, Vertice* dest) {
@@ -185,7 +208,7 @@ int ListaVertices::existeArista(Vertice* origen, Vertice* dest) {
 	return (pArista) ? 1 : 0;
 }
 
-int ListaVertices::numAristas(Vertice* origen) {
+int ListaVertices::numAristas(Vertice* origen) { //Sera numAristas del grafo?
 	return origen->sublista->contAristas;
 }
 
