@@ -3,7 +3,7 @@
 #include<iostream>
 using namespace std;
 
-class ListaVertices {	//LISTA DE VERTICES
+class Grafo {	//LISTA DE VERTICES
 	class Vertice;    // Prototipo de VERTICE
 private:
 	Vertice * primer;
@@ -44,9 +44,11 @@ private:
 		};
 	};
 public:
-	ListaVertices();
-	~ListaVertices();
+	typedef Vertice* vertice;
+	Grafo();
+	~Grafo();
 	void vaciar();
+	int vacio();
 	Vertice* agregarVertice(string);
 	void eliminarVertice(Vertice*);
 	void modificarVertice(Vertice*, string);
@@ -57,8 +59,8 @@ public:
 	double peso(Vertice*, Vertice*);
 	Vertice * primerVertice();
 	Vertice * siguienteVertice(Vertice*);
-	Vertice::ListaAristas::Arista * primerVerticeAdyacente(Vertice*);
-	Vertice::ListaAristas::Arista * siguienteVerticeAdyacente(Vertice*, Vertice*);
+	Vertice * primerVerticeAdyacente(Vertice*);
+	Vertice * siguienteVerticeAdyacente(Vertice*, Vertice*);
 	int existeArista(Vertice*, Vertice*);
 	int numAristas();
 	int numVertices();

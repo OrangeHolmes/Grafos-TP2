@@ -1,31 +1,31 @@
 #include "GrafoListas.h"
 
-ListaVertices::Vertice::ListaAristas::Arista::Arista() {
+Grafo::Vertice::ListaAristas::Arista::Arista() {
 	siguiente = 0;
 	vertice = 0;
 	valArista = 0;
 }
 
-ListaVertices::Vertice::ListaAristas::Arista::Arista(Vertice * dest, double peso) {
+Grafo::Vertice::ListaAristas::Arista::Arista(Vertice * dest, double peso) {
 	siguiente = 0;
 	vertice = dest;
 	valArista = peso;
 }
 
-ListaVertices::Vertice::ListaAristas::Arista::~Arista() {
+Grafo::Vertice::ListaAristas::Arista::~Arista() {
 	vertice = 0;
 	if (siguiente) {
 		delete siguiente;
 	}
 }
 
-ListaVertices::Vertice::ListaAristas::ListaAristas() {
+Grafo::Vertice::ListaAristas::ListaAristas() {
 	primera = 0;
 	ultima = 0;
 	contAristas = 0;
 }
 
-ListaVertices::Vertice::ListaAristas::~ListaAristas() {
+Grafo::Vertice::ListaAristas::~ListaAristas() {
 	ultima = 0;
 	if (primera) {
 		delete primera;
@@ -33,7 +33,7 @@ ListaVertices::Vertice::ListaAristas::~ListaAristas() {
 }
 
 //REQUIERE QUE LA ARISTA EXISTA O SE ESPICHA
-ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::Vertice::ListaAristas::buscarArista(Vertice* arista) {
+Grafo::Vertice::ListaAristas::Arista* Grafo::Vertice::ListaAristas::buscarArista(Vertice* arista) {
 	Arista* actual = primera;
 	if (actual) {
 		int seguir = 1;
@@ -49,19 +49,19 @@ ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::Vertice::ListaArist
 	return actual;
 }
 
-ListaVertices::Vertice::Vertice() {
+Grafo::Vertice::Vertice() {
 	siguiente = 0;
 	etiqueta = "";
 	sublista = new Vertice::ListaAristas();
 }
 
-ListaVertices::Vertice::Vertice(string etiq) {
+Grafo::Vertice::Vertice(string etiq) {
 	siguiente = 0;
 	etiqueta = etiq;
 	sublista = new Vertice::ListaAristas();
 }
 
-ListaVertices::Vertice::~Vertice() {
+Grafo::Vertice::~Vertice() {
 	if (sublista) {
 		delete sublista;
 	}
@@ -70,13 +70,13 @@ ListaVertices::Vertice::~Vertice() {
 	}
 }
 
-ListaVertices::ListaVertices() {
+Grafo::Grafo() {
 	primer = 0;
 	ultimo = 0;
 	contVertices = 0;
 }
 
-ListaVertices::~ListaVertices() {
+Grafo::~Grafo() {
 	ultimo = 0;
 	if (primer) {
 		delete primer;
@@ -84,7 +84,7 @@ ListaVertices::~ListaVertices() {
 }
 
 
-ListaVertices::Vertice* ListaVertices::agregarVertice(string etiqueta){
+Grafo::Vertice* Grafo::agregarVertice(string etiqueta){
 	Vertice * nueva = new Vertice(etiqueta);
 	if(ultimo) {
 		ultimo->siguiente = nueva;
@@ -97,7 +97,7 @@ ListaVertices::Vertice* ListaVertices::agregarVertice(string etiqueta){
 	return nueva;
 }
 
-void ListaVertices::eliminarVertice(Vertice* victima) {
+void Grafo::eliminarVertice(Vertice* victima) {
 	Vertice* actual = primerVertice();
 	if (victima == primer) {
 		primer = victima->siguiente;
@@ -115,24 +115,29 @@ void ListaVertices::eliminarVertice(Vertice* victima) {
 		}
 	}
 	victima->siguiente = 0;
+	--contVertices;
 	delete victima;
 }
 
-void ListaVertices::vaciar(){
+void Grafo::vaciar(){
 	delete this;
 }
 
-void ListaVertices::modificarVertice(Vertice* actual, string etiq) {
+int Grafo::vacio() {
+	return (primer) ? 0 : 1 ;
+}
+
+void Grafo::modificarVertice(Vertice* actual, string etiq) {
 	actual->etiqueta = etiq;
 }
 
-string ListaVertices::getEtiqueta(Vertice* actual) {
+string Grafo::getEtiqueta(Vertice* actual) {
 	return actual->etiqueta;
 }
 
-ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Vertice* origen, Vertice* dest, double peso) {
-	ListaVertices::Vertice::ListaAristas::Arista* nueva = new ListaVertices::Vertice::ListaAristas::Arista(dest,peso);
-	ListaVertices::Vertice::ListaAristas::Arista* simet = new ListaVertices::Vertice::ListaAristas::Arista(origen, peso);
+Grafo::Vertice::ListaAristas::Arista* Grafo::agregarArista(Vertice* origen, Vertice* dest, double peso) {
+	Grafo::Vertice::ListaAristas::Arista* nueva = new Grafo::Vertice::ListaAristas::Arista(dest,peso);
+	Grafo::Vertice::ListaAristas::Arista* simet = new Grafo::Vertice::ListaAristas::Arista(origen, peso);
 	if (origen->sublista->primera) {
 		origen->sublista->ultima->siguiente = nueva;
 	}
@@ -153,7 +158,7 @@ ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::agregarArista(Verti
 	return nueva;
 }
 
-void ListaVertices::eliminarArista(Vertice* origen, Vertice* dest) {
+void Grafo::eliminarArista(Vertice* origen, Vertice* dest) {
 	Vertice::ListaAristas::Arista* victima = origen->sublista->buscarArista(dest);
 	Vertice::ListaAristas::Arista* victimaSimet = dest->sublista->buscarArista(origen);
 	Vertice::ListaAristas::Arista* actual = origen->sublista->primera;
@@ -174,6 +179,7 @@ void ListaVertices::eliminarArista(Vertice* origen, Vertice* dest) {
 		}
 	}
 	victima->siguiente = 0;
+	--origen->sublista->contAristas;
 	delete victima;
 
 	actual = dest->sublista->primera;
@@ -193,44 +199,45 @@ void ListaVertices::eliminarArista(Vertice* origen, Vertice* dest) {
 		}
 	}
 	victimaSimet->siguiente = 0;
+	--dest->sublista->contAristas;
 	delete victimaSimet;
 }
 
-void ListaVertices::modificarPeso(Vertice* origen, Vertice * dest, double peso) {
+void Grafo::modificarPeso(Vertice* origen, Vertice * dest, double peso) {
 	Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(dest);
 	Vertice::ListaAristas::Arista* pAristaSimet = dest->sublista->buscarArista(origen);
 	pArista->valArista = peso;
 	pAristaSimet->valArista = peso;
 }
 
-double ListaVertices::peso(Vertice* origen, Vertice* dest) {
+double Grafo::peso(Vertice* origen, Vertice* dest) {
 	Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(dest);
 	return pArista->valArista;
 }
 
-ListaVertices::Vertice * ListaVertices::primerVertice() {
+Grafo::Vertice * Grafo::primerVertice() {
 	return primer;
 }
 
-ListaVertices::Vertice* ListaVertices::siguienteVertice(Vertice* actual) {
+Grafo::Vertice* Grafo::siguienteVertice(Vertice* actual) {
 	return actual->siguiente;
 }
 
-ListaVertices::Vertice::ListaAristas::Arista * ListaVertices::primerVerticeAdyacente(Vertice* actual) {
-	return actual->sublista->primera;
+Grafo::Vertice* Grafo::primerVerticeAdyacente(Vertice* actual) {
+	return actual->sublista->primera->vertice;
 }
 
-ListaVertices::Vertice::ListaAristas::Arista* ListaVertices::siguienteVerticeAdyacente(Vertice* origen, Vertice* arista) {
-	ListaVertices::Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(arista);
-	return pArista->siguiente;
+Grafo::Vertice* Grafo::siguienteVerticeAdyacente(Vertice* origen, Vertice* arista) {
+	Grafo::Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(arista);
+	return pArista->siguiente->vertice;
 }
 
-int ListaVertices::existeArista(Vertice* origen, Vertice* dest) {
-	ListaVertices::Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(dest);
+int Grafo::existeArista(Vertice* origen, Vertice* dest) {
+	Grafo::Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(dest);
 	return (pArista) ? 1 : 0;
 }
 
-int ListaVertices::numAristas() {
+int Grafo::numAristas() {
 	Vertice* actual = primerVertice();
 	int acumAristas = 0;
 	while (actual) {
@@ -240,16 +247,16 @@ int ListaVertices::numAristas() {
 	return acumAristas;
 }
 
-int ListaVertices::numVertices() {
+int Grafo::numVertices() {
 	return contVertices;
 }
 
-int ListaVertices::numVerticesAdyacentes(Vertice* origen) {
+int Grafo::numVerticesAdyacentes(Vertice* origen) {
 	return origen->sublista->contAristas;
 }
 ////////////VAMOS TIIM
 
-ostream & ListaVertices::imprimir( ostream & salida){
+ostream & Grafo::imprimir( ostream & salida){
 	salida << "{ ";
 	if(primer){
 	   primer->imprimir(salida);
@@ -257,7 +264,7 @@ ostream & ListaVertices::imprimir( ostream & salida){
 	salida << " }";
 	return salida;
 }
-ostream & ListaVertices::Vertice::imprimir( ostream & salida){
+ostream & Grafo::Vertice::imprimir( ostream & salida){
 	salida << etiqueta << " ";
 	if(siguiente){
 		siguiente->imprimir(salida);
