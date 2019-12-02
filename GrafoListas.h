@@ -38,7 +38,7 @@ private:
 				Vertice * vertice;
 				double valArista;
 				Arista();
-				Arista(Vertice*,double);
+				Arista(Vertice* , double);
 				~Arista();
 			};
 		};
@@ -49,23 +49,22 @@ public:
 	~Grafo();
 	void vaciar();
 	int vacio();
-	Vertice* agregarVertice(string);
-	void eliminarVertice(Vertice*);
-	void modificarVertice(Vertice*, string);
-	string getEtiqueta(Vertice*);
-	Vertice::ListaAristas::Arista* agregarArista(Vertice*, Vertice*,double);
-	void eliminarArista(Vertice*, Vertice*);
-	void modificarPeso(Vertice*, Vertice*, double);
-	double peso(Vertice*, Vertice*);
-	Vertice * primerVertice();
-	Vertice * siguienteVertice(Vertice*);
-	Vertice * primerVerticeAdyacente(Vertice*);
-	Vertice * siguienteVerticeAdyacente(Vertice*, Vertice*);
-	int existeArista(Vertice*, Vertice*);
+	void agregarVertice(string);
+	void eliminarVertice(vertice);
+	void modificarVertice(vertice, string);
+	string getEtiqueta(vertice);
+	void agregarArista(vertice, vertice,double);
+	void eliminarArista(vertice, vertice);
+	void modificarPeso(vertice, vertice, double);
+	double peso(vertice, vertice);
+	vertice primerVertice();
+	vertice siguienteVertice(vertice);
+	vertice primerVerticeAdyacente(vertice);
+	vertice siguienteVerticeAdyacente(vertice, vertice);
+	int existeArista(vertice, vertice);
 	int numAristas();
 	int numVertices();
-	int numVerticesAdyacentes(Vertice*);
-	ostream & imprimir( ostream & );
-	
+	int numVerticesAdyacentes(vertice);
+	ostream & imprimir( ostream & );	
 };
 #endif

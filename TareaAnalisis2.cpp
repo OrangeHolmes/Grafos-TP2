@@ -4,43 +4,70 @@
 #include "GrafoListas.h"
 //#include "GrafoMatriz.h"
 
+Grafo::vertice traducir(Grafo& g, string etiq) {
+	Grafo::vertice actual = g.primerVertice();
+	int seguir = 1;
+	while (actual && seguir) {
+		if (g.getEtiqueta(actual).compare(etiq)) { //Si es 0 son iguales 
+			actual = g.siguienteVertice(actual);
+		}
+		else {
+			seguir = 0;
+		}
+	}
+	return actual;
+}
 
 //----- INICIO ALGORITMOS -----
 
 //ii. Recorrido en Profundidad Primero para despliegue de etiquetas en pantalla.
+void profPrimeroR(Grafo grafo, Grafo::vertice actual, unordered_set<string>& dvv) {
+	dvv.insert(grafo.getEtiqueta(actual));
+	cout << grafo.getEtiqueta(actual);
+	auto vAdy = grafo.primerVerticeAdyacente(actual);
+	while (vAdy) {
+		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
+			profPrimeroR(grafo, vAdy, dvv);
+		}
+		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
+	}
+}
 void profPrimero(Grafo grafo) {
 	if (!grafo.vacio()) {
 		unordered_set<string> dvv;
 		Grafo::vertice vertActual = grafo.primerVertice();
 		while (vertActual) {
-			if (dvv.count(vertActual->etiqueta) == 0) {
+			if (dvv.count(grafo.getEtiqueta(vertActual)) == 0) {
 				profPrimeroR(grafo, vertActual, dvv);
 			}
 			vertActual = grafo.siguienteVertice(vertActual);
 		}
 	}
 }
-void profPrimeroR(Grafo grafo, Grafo::vertice actual, unordered_set<string>& dvv) {
-	dvv.insert(actual->etiqueta);
-	actual->imprimir(cout);
+
+//iii. Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero
+int tieneCiclosR(Grafo grafo, Grafo::vertice actual, Grafo::vertice inicial, unordered_set<string>& dvv) {
+	int tieneCiclo = 0;
+	dvv.insert(grafo.getEtiqueta(actual));
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
 	while (vAdy) {
-		if (dvv.count(vAdy->etiqueta) == 0) {
-			profPrimeroR(grafo, vAdy, dvv);
+		if (vAdy == inicial) {
+			++tieneCiclo;
+		}
+		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
+			tieneCiclo += tieneCiclosR(grafo, vAdy, inicial, dvv);
 		}
 		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
 	}
+	return tieneCiclo;
 }
-
-
-//iii. Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero
 int tieneCiclos(Grafo g) {
 	int tieneCiclos = 0;
 	if (!g.vacio()) {
 		unordered_set<string> dvv;
 		Grafo::vertice vertActual = g.primerVertice();
 		while (vertActual) {
-			if (dvv.count(vertActual->etiqueta) == 0)
+			if (dvv.count(g.getEtiqueta(vertActual)) == 0)
 			{
 				tieneCiclos += tieneCiclosR(g, vertActual, vertActual, dvv);
 			}
@@ -49,21 +76,7 @@ int tieneCiclos(Grafo g) {
 	}
 	return (tieneCiclos) ? 1 : 0;
 }
-int tieneCiclosR(Grafo grafo, Grafo::vertice actual, Grafo::vertice inicial, unordered_set<string>& dvv) {
-	int tieneCiclo = 0;	
-	dvv.insert(actual->etiqueta);
-	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
-		if (vAdy == inicial) {
-			++tieneCiclo;
-		}
-		if (dvv.count(vAdy->etiqueta) == 0){
-			tieneCiclo += tieneCiclosR(grafo, vAdy, inicial, dvv);
-		}
-		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
-	}
-	return tieneCiclo;
-}
+
 
 
 //x. Aislar un Vertice
@@ -86,10 +99,10 @@ int caminoEntreTodos(Grafo grafo) {
 	return conexo;
 }
 void caminoEntreTodosR(Grafo grafo, Grafo::vertice actual, unordered_set<string>& dvv) {
-	dvv.insert(actual->etiqueta);
+	dvv.insert(grafo.getEtiqueta(actual));
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
 	while (vAdy) {
-		if (dvv.count(vAdy->etiqueta) == 0) {
+		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
 			caminoEntreTodosR(grafo, vAdy, dvv);
 		}
 		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
@@ -101,14 +114,19 @@ void caminoEntreTodosR(Grafo grafo, Grafo::vertice actual, unordered_set<string>
 int main()
 {
     std::cout << "Hello World!\n";
-	Grafo grofo = Grafo();
-	auto* a = grofo.agregarVertice("AnuelAA");
-	auto* b = grofo.agregarVertice("BadBunny");
-	auto* c = grofo.agregarVertice("Cmen");
-	auto* d= grofo.agregarVertice("Danito");
-	auto* ab = grofo.agregarArista(a,b,5);
-	auto* ac = grofo.agregarArista(a, c, 2);
-	auto* ad = grofo.agregarArista(a, d, 7);
-	auto* ba = grofo.agregarArista(b, a, 1);
-	grofo.imprimir(cout);
+	Grafo g = Grafo();
+	g.agregarVertice("A");
+	g.agregarVertice("B");
+	g.agregarVertice("C");
+	g.agregarVertice("D");
+	Grafo::vertice a = traducir(g, "A");
+	Grafo::vertice b = traducir(g, "B");
+	Grafo::vertice c = traducir(g, "C");
+	Grafo::vertice d = traducir(g, "D");
+
+	g.agregarArista(a,b,5);
+	g.agregarArista(a, c, 2);
+	g.agregarArista(a, d, 7);
+	g.agregarArista(b, a, 1);
+	g.imprimir(cout);
 }
