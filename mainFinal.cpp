@@ -2,10 +2,6 @@
 #include <stdlib.h> //Para usar system("cls");
 #include <conio.h> //Para usar _getch();
 #include <unordered_set>
-#include <bits/stdc++.h>  
-#include <vector>
-#include <utility> 
-#include <map>
 
 #include "GrafoListas.h"
 //#include "GrafoMatriz.h"
@@ -27,8 +23,8 @@ Grafo::vertice traducir(Grafo& g, string etiq) {
 
 //----- INICIO ALGORITMOS -----
 
-//ii. Recorrido en Profundidad Primero para despliegue de etiquetas en pantalla.
-void profPrimeroR(Grafo grafo, Grafo::vertice actual, unordered_set<string>& dvv) {
+//ii. Recorrido en Profundidad Primero para despliegue de etiquetas en pantalla.	-*-*- SIRVE
+void profPrimeroR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
 	dvv.insert(grafo.getEtiqueta(actual));
 	cout << grafo.getEtiqueta(actual);
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
@@ -39,7 +35,7 @@ void profPrimeroR(Grafo grafo, Grafo::vertice actual, unordered_set<string>& dvv
 		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
 	}
 }
-void profPrimero(Grafo grafo) {
+void profPrimero(Grafo& grafo) {
 	if (!grafo.vacio()) {
 		unordered_set<string> dvv;
 		Grafo::vertice vertActual = grafo.primerVertice();
@@ -52,8 +48,8 @@ void profPrimero(Grafo grafo) {
 	}
 }
 
-//iii. Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero
-int tieneCiclosR(Grafo grafo, Grafo::vertice actual, Grafo::vertice inicial, unordered_set<string>& dvv) {
+//iii. Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero		-*-*- NO SIRVE
+int tieneCiclosR(Grafo& grafo, Grafo::vertice& actual, Grafo::vertice& inicial, unordered_set<string>& dvv) {
 	int tieneCiclo = 0;
 	dvv.insert(grafo.getEtiqueta(actual));
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
@@ -68,7 +64,7 @@ int tieneCiclosR(Grafo grafo, Grafo::vertice actual, Grafo::vertice inicial, uno
 	}
 	return tieneCiclo;
 }
-int tieneCiclos(Grafo g) {
+int tieneCiclos(Grafo& g) {
 	int tieneCiclos = 0;
 	if (!g.vacio()) {
 		unordered_set<string> dvv;
@@ -84,28 +80,17 @@ int tieneCiclos(Grafo g) {
 	return (tieneCiclos) ? 1 : 0;
 }
 
-
-
-//x. Aislar un Vertice
-void aislarVertice(Grafo grafo, Grafo::vertice vert) {
+//x. Aislar un Vertice										 -*-*- SIRVE
+void aislarVertice(Grafo& grafo, Grafo::vertice& vert) {
+	Grafo::vertice vAdy;
 	while (grafo.numVerticesAdyacentes(vert)) {
-		auto vAdy = grafo.primerVerticeAdyacente(vert);
+		vAdy = grafo.primerVerticeAdyacente(vert);
 		grafo.eliminarArista(vert, vAdy);
 	}
 }
 
-//xii. Averiguar si existe camino entre todo par de vértices
-int caminoEntreTodos(Grafo grafo) {
-	int conexo = 0;
-	if (!grafo.vacio()) {
-		unordered_set<string> dvv;
-		auto vertActual = grafo.primerVertice();
-		profPrimeroR(grafo, vertActual, dvv);
-		conexo = (dvv.size() == grafo.numVertices());
-	}
-	return conexo;
-}
-void caminoEntreTodosR(Grafo grafo, Grafo::vertice actual, unordered_set<string>& dvv) {
+//xii. Averiguar si existe camino entre todo par de vértices  -*-*- SIRVE
+void caminoEntreTodosR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
 	dvv.insert(grafo.getEtiqueta(actual));
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
 	while (vAdy) {
@@ -115,46 +100,16 @@ void caminoEntreTodosR(Grafo grafo, Grafo::vertice actual, unordered_set<string>
 		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
 	}
 }
-
-//iv. Dijkstra.
-determinarMin(vector<int> valores, vector<int> recorridos){
-	int min = 0;
-	for(int i=0;i < valores.size();++i){
-		if(valores[i] < valores[min] && recorridos[i] == false){
-			min = i;
-		}
+int caminoEntreTodos(Grafo& grafo) {
+	int conexo = 0;
+	if (!grafo.vacio()) {
+		unordered_set<string> dvv;
+		auto vertActual = grafo.primerVertice();
+		caminoEntreTodosR(grafo, vertActual, dvv);
+		conexo = (dvv.size() == grafo.numVertices());
 	}
-	return min;	
+	return conexo;
 }
-
-dijkstra(Grafo grafo, Grafo::Vertice inicio){
-	vector<int> valoresMinimos;
-	vector<bool> recorridos;
-	map<int, Grafo::Vertice> relacion;
-	Grafo::Vertice verticeActual = grafo.primerVertice();
-	
-	for(int i=0; i < grafo.numVert();++i){
-		relacion.insert( pair<int, Vertice> (i, verticeActual) );
-		valoresMinimos[i] = INT_MAX;
-		recorridos[i] = false;
-		verticeActual = grafo.siguienteVertice(verticeActual);
-	}
-	map<int,Grafo::Vertice>::iterator i = relacion.find(inicio);
-	valoresMinimos[i->second] = 0;
-	
-	for(int j = 0; j < grafo.numVert()-1; ++j ){              
-		int min = determinarMin(valoresMinimos,recorridos);
-		recorridos[min] = true;
-		Grafo::Vertice vMin = relacion[min];
-		for(int k = 0; k < grafo.numVert(); ++k){                  
-			Grafo::Vertice vK = relacion[k]; 
- 			if(grafo.peso(vMin,vK) < valoresMinimos[k]){    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
-				valoresMinimos[k] = grafo.peso(vMin,vK);   
-			}
-		}
-	}
-}
-
 //----- FIN ALGORITMOS -----
 
 void operadoresBasicos(Grafo& g) {
@@ -163,7 +118,7 @@ void operadoresBasicos(Grafo& g) {
 		system("cls");
 		cout << "\n\t ---- Grafo No Dirigido ---\n\n 1. Preguntar si el grafo esta vacio\n 2. Vaciar el grafo\n 3. Insertar Vertice\n 4. Borrar Vertice\n 5. Modificar Vertice\n"
 			<< " 6. Verificar Etiqueta \n 7. Agregar Arista\n 8. Eliminar Arista\n 9. Modificar Peso\n 10. Recuperar Peso\n 11. Recuperar Primer Vertice\n 12. Recuperar Siguiente Vertice\n"
-			<< " 13.Recuperar Primer Vertice Adyacente\n 14. Recuperar Siguiente Vertice Adyacente\n 15. Existe Arista\n 16. Contar Aristas del Grafo\n 17. Contar Vertices\n 18. Contar Aristas de un Vertice\n 19. Regresar \n\n  -Digite una opcion: " << endl;
+			<< " 13.Recuperar Primer Vertice Adyacente\n 14. Recuperar Siguiente Vertice Adyacente\n 15. Existe Arista\n 16. Contar Aristas del Grafo\n 17. Contar Vertices\n 18. Contar Aristas de un Vertice\n 19. Regresar \n\n  -Digite una opcion: ";
 		cin >> opcion;
 		string eti, eti2;
 		Grafo::vertice v1, v2;
@@ -180,12 +135,12 @@ void operadoresBasicos(Grafo& g) {
 			char opc = 'N';
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Desea vaciar el grafo?(S/N) ";
 			cin >> opc;
-			if (opc == 'S' || opc == 's') {
+			if ((opc == 'S' || opc == 's') && !g.vacio()) {
 				g.vaciar();
 				cout << "\n ---Grafo vaciado correctamente --- ";
 			}
 			else {
-				cout << "\n ---Grafo NO fue vaciado --- ";
+				cout << "\n ---NO se hicieron cambios --- ";
 			}
 			_getch();
 			break;
@@ -204,8 +159,18 @@ void operadoresBasicos(Grafo& g) {
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Que etiqueta desea borrar?: ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			g.eliminarVertice(v1);
-			g.imprimir(cout);
+			if (g.verticeValido(v1)) {
+				if (g.numVerticesAdyacentes(v1)) {
+					cout << "\n El vertice debe estar aislado!";
+				}
+				else {
+					g.eliminarVertice(v1);
+					g.imprimir(cout);
+				}
+			}
+			else {
+				cout << "\n El vertice no existe!";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -214,10 +179,15 @@ void operadoresBasicos(Grafo& g) {
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Que etiqueta desea modificar?: ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			cout << "\n -Digite la nueva etiqueta: ";
-			cin >> eti2;
-			g.modificarVertice(v1, eti2);
-			g.imprimir(cout);
+			if (g.verticeValido(v1)) {
+				cout << "\n -Digite la nueva etiqueta: ";
+				cin >> eti2;
+				g.modificarVertice(v1, eti2);
+				g.imprimir(cout);
+			}
+			else {
+				cout << "\n El vertice no existe!";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -226,7 +196,12 @@ void operadoresBasicos(Grafo& g) {
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Que etiqueta desea verificar?: ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			cout << "\n\n El vertice: " << g.getEtiqueta(v1) << " existe!" << endl;
+			if (g.verticeValido(v1)) {
+				cout << "\n\n El vertice: " << g.getEtiqueta(v1) << " existe!" << endl;
+			}
+			else {
+				cout << "\n\n El vertice: " << eti << " NO existe!" << endl;
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -241,8 +216,13 @@ void operadoresBasicos(Grafo& g) {
 			cin >> peso;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			g.agregarArista(v1, v2, peso);
-			g.imprimir(cout);
+			if (g.verticeValido(v1) && g.verticeValido(v2)) {
+				g.agregarArista(v1, v2, peso);
+				cout << "\n\t Arista creada!";
+			}
+			else {
+				cout << "\n\t Datos invalidos! NO agregado";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -256,8 +236,13 @@ void operadoresBasicos(Grafo& g) {
 			cin >> eti2;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			g.eliminarArista(v1, v2);
-			g.imprimir(cout);
+			if (g.verticeValido(v1) && g.verticeValido(v2)) {
+				g.eliminarArista(v1, v2);
+				cout << "\n\t Arista Eliminada!";
+			}
+			else {
+				cout << "\n\t Datos invalidos! NO eliminado";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -274,8 +259,13 @@ void operadoresBasicos(Grafo& g) {
 			cin >> peso;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			g.modificarPeso(v1, v2, peso);
-			g.imprimir(cout);
+			if (g.verticeValido(v1) && g.verticeValido(v2)) {
+				g.modificarPeso(v1, v2, peso);
+				cout << "\n\t Peso modificado!";
+			}
+			else {
+				cout << "\n\t Datos invalidos! NO eliminado";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -288,7 +278,12 @@ void operadoresBasicos(Grafo& g) {
 			cin >> eti2;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			cout << "\n\n La arista tiene un peso de: " << g.peso(v1, v2) << endl;
+			if (g.verticeValido(v1) && g.verticeValido(v2)) {
+				cout << "\n\n La arista tiene un peso de: " << g.peso(v1, v2) << endl;
+			}
+			else {
+				cout << "\n\t Datos invalidos!";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -309,7 +304,7 @@ void operadoresBasicos(Grafo& g) {
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -De cual vertice desea conocer el siguiente? ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			if (g.siguienteVertice(v1)) {
+			if (g.verticeValido(g.siguienteVertice(v1))) {
 				cout << "\n\n -El siguiente vertice es: " << g.getEtiqueta(g.siguienteVertice(v1)) << endl;
 			}
 			else {
@@ -323,7 +318,7 @@ void operadoresBasicos(Grafo& g) {
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -De cual vertice desea conocer su primer arista? ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			if (g.primerVerticeAdyacente(v1)) {
+			if (g.verticeValido(g.primerVerticeAdyacente(v1))) {
 				cout << "\n\n -La primer arista es con: " << g.getEtiqueta(g.primerVerticeAdyacente(v1)) << endl;
 			}
 			else {
@@ -340,7 +335,7 @@ void operadoresBasicos(Grafo& g) {
 			cin >> eti2;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			if (g.siguienteVerticeAdyacente(v1, v2)) {
+			if (g.verticeValido(g.siguienteVerticeAdyacente(v1, v2))) {
 				cout << "\n\n -La siguiente arista de " << g.getEtiqueta(v1) << " es con: " << g.getEtiqueta(g.siguienteVerticeAdyacente(v1, v2)) << endl;
 			}
 			else {
@@ -383,7 +378,12 @@ void operadoresBasicos(Grafo& g) {
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Digite el vertice: ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			cout << "\n\n El vertice tiene " << g.numVerticesAdyacentes(v1) << " aristas" << endl;
+			if (g.verticeValido(v1)) {
+				cout << "\n\n El vertice tiene " << g.numVerticesAdyacentes(v1) << " aristas" << endl;
+			}
+			else {
+				cout << " Vertice no existe!";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -394,6 +394,10 @@ void operadoresBasicos(Grafo& g) {
 			_getch();
 			break;
 		}
+		if (opcion != 19) {
+			cin.clear();
+			cin.ignore(100, '\n');
+		}
 	} while (opcion != 19);
 }
 
@@ -402,18 +406,28 @@ void algoritmos(Grafo& g) {
 	do {
 		system("cls");
 		cout << "\n\t ---- Grafo No Dirigido ---\n\n 1. Recorrido en Ancho Primero\n 2. Recorrido en Profundidad Primero\n 3. El grafo tiene ciclos?\n 4. Algoritmo de Dijkstra\n 5.Algoritmo de Floyd\n"
-			<< " 6. Circuito Hamilton de Menor Costo\n 7. Colorear Grafo\n 8. Algoritmo de Prim\n 9. Algoritmo de Kruskal\n 10. Aislar un vértice\n 11. Puntos de articulación del grafo\n 12. Es conexo?\n 13. Regresar \n\n  -Digite una opcion: " << endl;
+			<< " 6. Circuito Hamilton de Menor Costo\n 7. Colorear Grafo\n 8. Algoritmo de Prim\n 9. Algoritmo de Kruskal\n 10. Aislar un vértice\n 11. Puntos de articulación del grafo\n 12. Es conexo?\n 13. Regresar \n\n  -Digite una opcion: ";
 		cin >> opcion;
+		string eti, eti2;
+		Grafo::vertice v1, v2;
 		switch (opcion)
 		{
 		case 1:
 			//i.Recorrido en Ancho Primero para despliegue de etiquetas en pantalla.	
 			break;
 		case 2:
-			//ii.Recorrido en Profundidad Primero para despliegue de etiquetas en pantalla.
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";		
+			profPrimero(g);
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 3:
-			//iii.Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero.
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
+			tieneCiclos(g) ? cout << "\n\t ---- Grafo No Dirigido ---\n\n - Tiene ciclos!" : cout << "\n\t ---- Grafo No Dirigido ---\n\n -NO tiene ciclos!" << endl;
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 4:
 			//iv.Dijkstra.
@@ -434,19 +448,39 @@ void algoritmos(Grafo& g) {
 			//ix.Kruskal
 			break;
 		case 10:
-			//x.Aislar un vértice
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Que vertice desea aislar?: ";
+			cin >> eti;
+			v1 = traducir(g, eti);
+			if (g.verticeValido(v1)) {
+				aislarVertice(g,v1);
+				cout << "\n Vertice aislado!";
+			}
+			else {
+				cout << "\n El vertice no existe!";
+			}
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 11:
 			//xi.Encontrar los puntos de articulación del grafo
 			break;
 		case 12:
-			//xii.Averiguar si existe camino entre todo par de vértices.
+			system("cls");
+			caminoEntreTodos(g) ? cout << "\n\t ---- Grafo No Dirigido ---\n\n -Existe camino entre todos!" : cout << "\n\t ---- Grafo No Dirigido ---\n\n -NO existe camino entre todos!" << endl;
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 13:
 			break;
 		default:
 			cout << "Opcion Invalida" << endl;
+			_getch();
 			break;
+		}
+		if (opcion != 13) {
+			cin.clear();
+			cin.ignore(100, '\n');
 		}
 	} while (opcion != 13);
 }
@@ -472,7 +506,12 @@ int main()
 			break;
 		default:
 			cout << "Opcion Invalida" << endl;
+			_getch();
 			break;
+		}
+		if (op != 3) {
+			cin.clear();
+			cin.ignore(100, '\n');
 		}
 	} while (op != 3);
 	return 0;

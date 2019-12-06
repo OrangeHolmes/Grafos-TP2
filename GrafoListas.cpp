@@ -74,6 +74,7 @@ Grafo::Grafo() {
 	primer = 0;
 	ultimo = 0;
 	contVertices = 0;
+	totAristas = 0;
 }
 
 Grafo::~Grafo() {
@@ -81,6 +82,7 @@ Grafo::~Grafo() {
 	if (primer) {
 		delete primer;
 	}
+	primer = 0;
 }
 
 
@@ -119,7 +121,9 @@ void Grafo::eliminarVertice(vertice victima) {
 }
 
 void Grafo::vaciar(){
-	delete this;
+	delete primer;
+	primer = 0;
+	ultimo = 0;
 }
 
 int Grafo::vacio() {
@@ -156,6 +160,7 @@ void Grafo::agregarArista(vertice origen, vertice dest, double peso) {
 	}
 	dest->sublista->ultima = simet;
 	++dest->sublista->contAristas;
+	++totAristas;
 }
 
 void Grafo::eliminarArista(vertice origen, vertice dest) {
@@ -201,6 +206,7 @@ void Grafo::eliminarArista(vertice origen, vertice dest) {
 	victimaSimet->siguiente = 0;
 	--dest->sublista->contAristas;
 	delete victimaSimet;
+	--totAristas;
 }
 
 void Grafo::modificarPeso(vertice origen, vertice dest, double peso) {
@@ -233,7 +239,10 @@ Grafo::vertice Grafo::primerVerticeAdyacente(vertice actual) {
 
 Grafo::vertice Grafo::siguienteVerticeAdyacente(vertice origen, vertice arista) {
 	Grafo::Vertice::ListaAristas::Arista* pArista = origen->sublista->buscarArista(arista);
-	return pArista->siguiente->vertice;
+	if (pArista->siguiente)
+		return pArista->siguiente->vertice;
+	else
+		return 0;
 }
 
 int Grafo::existeArista(vertice origen, vertice dest) {
@@ -242,13 +251,7 @@ int Grafo::existeArista(vertice origen, vertice dest) {
 }
 
 int Grafo::numAristas() {
-	vertice actual = primerVertice();
-	int acumAristas = 0;
-	while (actual) {
-		acumAristas += numVerticesAdyacentes(actual);
-		actual = siguienteVertice(actual);
-	}
-	return acumAristas;
+	return totAristas;
 }
 
 int Grafo::numVertices() {

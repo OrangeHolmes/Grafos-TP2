@@ -9,6 +9,7 @@ private:
 	Vertice * primer;
 	Vertice * ultimo;
 	int contVertices;
+	int totAristas;
 	class Vertice { // VERTICE
 		class ListaAristas; //Prototipo de LISTA DE ARISTAS
 
