@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "GrafoMatriz.h"
 using namespace std;
 
@@ -63,8 +64,8 @@ string Grafo::getEtiqueta(vertice verticeEntrada){
 void Grafo::agregarArista(vertice vOrigen, vertice vDestino, double pesoArista){
 	matrizAdyacencia[vOrigen][vDestino] = pesoArista;
 	matrizAdyacencia[vDestino][vOrigen] = pesoArista;
-	++vectorVertices[vOrigen].numVerticesAdyacentes;
-	++vectorVertices[vDestino].numVerticesAdyacentes;
+	++(vectorVertices[vOrigen].numVerticesAdyacentes);
+	++(vectorVertices[vDestino].numVerticesAdyacentes);
 	++contadorAristas;
 }
 
@@ -99,8 +100,8 @@ Grafo::vertice Grafo::primerVerticeAdyacente(vertice vOrigen){
 	Grafo::vertice verticeAdyacente = -1;
 	for (int i = 0; i <= ultimoLleno; ++i){
 		if (matrizAdyacencia[vOrigen][i] != pesoNulo) {
-			i = ultimoLleno+1;
 			verticeAdyacente = i;
+			i = ultimoLleno + 1;
 		}
 	}
 	return verticeAdyacente;
@@ -111,8 +112,8 @@ Grafo::vertice Grafo::siguienteVerticeAdyacente(vertice vOrigen, vertice vAdyace
 	Grafo::vertice vAdyacenteSiguiente = -1;
 	for (int i = vAdyacenteActual + 1; i <= ultimoLleno; ++i) {
 		if (matrizAdyacencia[vOrigen][i] != pesoNulo) {
-			i = ultimoLleno + 1;
 			vAdyacenteSiguiente = i;
+			i = ultimoLleno + 1;
 		}
 	}
 	return vAdyacenteSiguiente;
@@ -121,7 +122,7 @@ Grafo::vertice Grafo::siguienteVerticeAdyacente(vertice vOrigen, vertice vAdyace
 
 
 int Grafo::verticeValido(vertice vEntrada){
-	return 0 <= vEntrada <= ultimoLleno ? 1 : 0;
+	return (0 <= vEntrada && vEntrada <= ultimoLleno) ? 1 : 0;
 }
 
 int Grafo::existeArista(vertice vOrigen, vertice vDestino) {
