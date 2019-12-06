@@ -2,10 +2,10 @@
 #include <stdlib.h> //Para usar system("cls");
 #include <conio.h> //Para usar _getch();
 #include <unordered_set>
-#include<bits/stdc++.h>  
+#include <queue>
+#include <map>
 #include <vector>
 #include <utility> 
-#include <map>
 
 #include "GrafoListas.h"
 //#include "GrafoMatriz.h"
@@ -111,7 +111,7 @@ int tieneCiclos(Grafo& g) {
 	return (tieneCiclos) ? 1 : 0;
 }
 
-// v. Floyd
+//v. Floyd													*-*-*-* SIRVE
 void floyd(Grafo g) {
 	int vertTotales = g.numVertices();
 	int ** matrizCostos = new int*[vertTotales];
@@ -192,19 +192,20 @@ int caminoEntreTodos(Grafo& grafo) {
 	return conexo;
 }
 
-//metodo aux
-int determinarMin(vector<double> valores, vector<bool> recorridos){
+
+
+
+// iv. Dijkstra.
+determinarMin(vector<double> valores, vector<bool> recorridos) {
 	int min = 0;
-	for(int i=0;i < valores.size();++i){
-		if(valores[i] < valores[min] && recorridos[i] == false){
+	for (int i = 0; i < valores.size(); ++i) {
+		if (valores[i] < valores[min] && recorridos[i] == false) {
 			min = i;
 		}
 	}
 	return min;
 }
-
-// iv. Dijkstra.
-vector<double> dijkstra(Grafo grafo, Grafo::vertice inicio){
+dijkstra(Grafo grafo, Grafo::vertice inicio){
 	vector<double> valoresMinimos;
 	vector<string> masCercano;
 	vector<bool> recorridos;
@@ -233,43 +234,40 @@ vector<double> dijkstra(Grafo grafo, Grafo::vertice inicio){
 			}
 		}
 	}
-	return valoresMinimos;
 }
 
 //viii. Prim
-vector<double> prim(Grafo grafo){
+prim(Grafo grafo) {
 	vector<int> menorCosto;
 	vector<string> masCercano;
 	vector<bool> recorridos;
 	map<int, Grafo::vertice> relacion;
 	Grafo::vertice verticeActual = grafo.primerVertice();
 
-	for(int i=0; i < grafo.numVert();++i){
-		relacion.insert( pair<int, Vertice> (i, verticeActual) );
+	for (int i = 0; i < grafo.numVert(); ++i) {
+		relacion.insert(pair<int, Vertice>(i, verticeActual));
 		menorCosto[i] = double(INT_MAX);
 		recorridos[i] = false;
 		masCercano[i] = "-";
 		verticeActual = grafo.siguienteVertice(verticeActual);
-	}	
-	map<int,Grafo::vertice>::iterator i = relacion.find(verticeActual);
+	}
+	map<int, Grafo::vertice>::iterator i = relacion.find(verticeActual);
 	menorCosto[i->second] = 0;
 
-	for(int j = 0; j < grafo.numVert()-1; ++j ){              
-		int min = determinarMin(menorCosto,recorridos);
+	for (int j = 0; j < grafo.numVert() - 1; ++j) {
+		int min = determinarMin(menorCosto, recorridos);
 		recorridos[min] = true;
 		Grafo::vertice vMin = relacion[min];
-		
-		for(int k = 0; k < grafo.numVert(); ++k){                  
-			Grafo::vertice vK = relacion[k]; 
- 			if(!recorridos[k] && grafo.peso(vMin,vK) < valoresMinimos[k]){    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
-				valoresMinimos[k] = grafo.peso(vMin,vK);
-				masCercano[k] = grafo.getEtiqueta(vMin);   
+
+		for (int k = 0; k < grafo.numVert(); ++k) {
+			Grafo::vertice vK = relacion[k];
+			if (!recorridos[k] && grafo.peso(vMin, vK) < valoresMinimos[k]) {    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
+				valoresMinimos[k] = grafo.peso(vMin, vK);
+				masCercano[k] = grafo.getEtiqueta(vMin);
 			}
 		}
 	}
-	return menorCosto;
 }
-
 
 //----- FIN ALGORITMOS -----
 
@@ -326,8 +324,8 @@ void operadoresBasicos(Grafo& g) {
 				}
 				else {
 					g.eliminarVertice(v1);
-					g.imprimir(cout);
 				}
+				g.imprimir(cout);
 			}
 			else {
 				cout << "\n El vertice no existe!";
@@ -379,7 +377,8 @@ void operadoresBasicos(Grafo& g) {
 			v2 = traducir(g, eti2);
 			if (g.verticeValido(v1) && g.verticeValido(v2)) {
 				g.agregarArista(v1, v2, peso);
-				cout << "\n\t Arista creada!";
+				cout << "\n\t Arista creada!\n";
+				g.imprimir(cout);
 			}
 			else {
 				cout << "\n\t Datos invalidos! NO agregado";
@@ -400,6 +399,7 @@ void operadoresBasicos(Grafo& g) {
 			if (g.verticeValido(v1) && g.verticeValido(v2)) {
 				g.eliminarArista(v1, v2);
 				cout << "\n\t Arista Eliminada!";
+				g.imprimir(cout);
 			}
 			else {
 				cout << "\n\t Datos invalidos! NO eliminado";
@@ -422,7 +422,8 @@ void operadoresBasicos(Grafo& g) {
 			v2 = traducir(g, eti2);
 			if (g.verticeValido(v1) && g.verticeValido(v2)) {
 				g.modificarPeso(v1, v2, peso);
-				cout << "\n\t Peso modificado!";
+				cout << "\n\t Peso modificado!\n";
+				g.imprimir(cout);
 			}
 			else {
 				cout << "\n\t Datos invalidos! NO eliminado";
@@ -574,7 +575,11 @@ void algoritmos(Grafo& g) {
 		switch (opcion)
 		{
 		case 1:
-			//i.Recorrido en Ancho Primero para despliegue de etiquetas en pantalla.	
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
+			anchoPrimero(g);
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 2:
 			system("cls");
@@ -594,7 +599,11 @@ void algoritmos(Grafo& g) {
 			//iv.Dijkstra.
 			break;
 		case 5:
-			//v.Floyd.
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
+			floyd(g);
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 6:
 			//vi.Encontrar Circuito de Hamilton de Menor Costo.
