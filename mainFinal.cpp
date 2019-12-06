@@ -29,28 +29,40 @@ Grafo::vertice traducir(Grafo& g, string etiq) {
 
 //ii. Recorrido en Profundidad Primero para despliegue de etiquetas en pantalla.	-*-*- SIRVE
 void profPrimeroR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
-	dvv.insert(grafo.getEtiqueta(actual));
-	cout << grafo.getEtiqueta(actual);
-	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
-		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
-			profPrimeroR(grafo, vAdy, dvv);
-		}
-		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
-	}
+    dvv.insert(grafo.getEtiqueta(actual));
+    cout << grafo.getEtiqueta(actual);
+    auto vAdy = grafo.primerVerticeAdyacente(actual);
+    while (grafo.verticeValido(vAdy)) {
+        if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
+            profPrimeroR(grafo, vAdy, dvv);
+        }
+        vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
+    }
 }
+
 void profPrimero(Grafo& grafo) {
-	if (!grafo.vacio()) {
-		unordered_set<string> dvv;
-		Grafo::vertice vertActual = grafo.primerVertice();
-		while (vertActual) {
-			if (dvv.count(grafo.getEtiqueta(vertActual)) == 0) {
-				profPrimeroR(grafo, vertActual, dvv);
-			}
-			vertActual = grafo.siguienteVertice(vertActual);
-		}
-	}
+    if (!grafo.vacio()) {
+        unordered_set<string> dvv;
+        Grafo::vertice vertActual = grafo.primerVertice();
+        while (grafo.verticeValido(vertActual)) {
+            if (dvv.count(grafo.getEtiqueta(vertActual)) == 0) {
+                profPrimeroR(grafo, vertActual, dvv);
+            }
+            vertActual = grafo.siguienteVertice(vertActual);
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 //iii. Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero		-*-*- NO SIRVE
 int tieneCiclosR(Grafo& grafo, Grafo::vertice& actual, Grafo::vertice& inicial, unordered_set<string>& dvv) {
