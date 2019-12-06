@@ -153,7 +153,7 @@ determinarMin(vector<double> valores, vector<bool> recorridos){
 }
 
 // iv. Dijkstra.
-dijkstra(Grafo grafo, Grafo::vertice inicio){
+vector<double> dijkstra(Grafo grafo, Grafo::vertice inicio){
 	vector<double> valoresMinimos;
 	vector<string> masCercano;
 	vector<bool> recorridos;
@@ -182,10 +182,11 @@ dijkstra(Grafo grafo, Grafo::vertice inicio){
 			}
 		}
 	}
+	return valoresMinimos;
 }
 
 //viii. Prim
-prim(Grafo grafo){
+vector<double> prim(Grafo grafo){
 	vector<int> menorCosto;
 	vector<string> masCercano;
 	vector<bool> recorridos;
@@ -215,6 +216,7 @@ prim(Grafo grafo){
 			}
 		}
 	}
+	return menorCosto;
 }
 
 
