@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h> //Para usar system("cls");
-#include <conio.h> //Para usar getch();
+#include <conio.h> //Para usar _getch();
 #include <unordered_set>
 
 #include "GrafoListas.h"
@@ -120,17 +120,17 @@ void operadoresBasicos(Grafo& g) {
 		system("cls");
 		cout << "\n\t ---- Grafo No Dirigido ---\n\n 1. Preguntar si el grafo esta vacio\n 2. Vaciar el grafo\n 3. Insertar Vertice\n 4. Borrar Vertice\n 5. Modificar Vertice\n"
 			<< " 6. Verificar Etiqueta \n 7. Agregar Arista\n 8. Eliminar Arista\n 9. Modificar Peso\n 10. Recuperar Peso\n 11. Recuperar Primer Vertice\n 12. Recuperar Siguiente Vertice\n"
-			<<" 13.Recuperar Primer Vertice Adyacente\n 14. Recuperar Siguiente Vertice Adyacente\n 15. Existe Arista\n 16. Contar Aristas del Grafo\n 17. Contar Vertices\n 18. Contar Aristas de un Vertice\n 19. Regresar \n\n  -Digite una opcion: " << endl;
+			<< " 13.Recuperar Primer Vertice Adyacente\n 14. Recuperar Siguiente Vertice Adyacente\n 15. Existe Arista\n 16. Contar Aristas del Grafo\n 17. Contar Vertices\n 18. Contar Aristas de un Vertice\n 19. Regresar \n\n  -Digite una opcion: " << endl;
 		cin >> opcion;
 		string eti, eti2;
-		Grafo::vertice v1,v2;
+		Grafo::vertice v1, v2;
 		switch (opcion)
 		{
 		case 1:
 			system("cls");
 			g.vacio() ? cout << "\n\t ---- Grafo No Dirigido ---\n\n -Esta vacio" : cout << "\n\t ---- Grafo No Dirigido ---\n\n -No esta vacio" << endl;
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 2: {
 			system("cls");
@@ -144,7 +144,7 @@ void operadoresBasicos(Grafo& g) {
 			else {
 				cout << "\n ---Grafo NO fue vaciado --- ";
 			}
-			getch();
+			_getch();
 			break;
 		}
 		case 3:
@@ -154,7 +154,7 @@ void operadoresBasicos(Grafo& g) {
 			g.agregarVertice(eti);
 			g.imprimir(cout);
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 4:
 			system("cls");
@@ -164,7 +164,7 @@ void operadoresBasicos(Grafo& g) {
 			g.eliminarVertice(v1);
 			g.imprimir(cout);
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 5:
 			system("cls");
@@ -176,35 +176,35 @@ void operadoresBasicos(Grafo& g) {
 			g.modificarVertice(v1, eti2);
 			g.imprimir(cout);
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 6:
 			system("cls");
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Que etiqueta desea verificar?: ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			cout << "\n\n El vertice: " << g.getEtiqueta(v1) << " existe!"<<endl;
+			cout << "\n\n El vertice: " << g.getEtiqueta(v1) << " existe!" << endl;
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 7: {
-			double peso = 0.0; 
+			double peso = 0.0;
 			system("cls");
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Digite un vertice a conectar: ";
-			cin >> eti; 
+			cin >> eti;
 			cout << "\n -Digite el otro vertice a conectar: ";
 			cin >> eti2;
 			cout << "\n -Digite el peso de la arista: ";
 			cin >> peso;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			g.agregarArista(v1,v2, peso);
+			g.agregarArista(v1, v2, peso);
 			g.imprimir(cout);
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		}
-		case 8:
+		case 8: {
 			double peso = 0.0;
 			system("cls");
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Digite un vertice a desconectar: ";
@@ -216,8 +216,9 @@ void operadoresBasicos(Grafo& g) {
 			g.eliminarArista(v1, v2);
 			g.imprimir(cout);
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
+		}
 		case 9:
 		{
 			double peso = 0.0;
@@ -233,7 +234,7 @@ void operadoresBasicos(Grafo& g) {
 			g.modificarPeso(v1, v2, peso);
 			g.imprimir(cout);
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		}
 		case 10:
@@ -246,7 +247,7 @@ void operadoresBasicos(Grafo& g) {
 			v2 = traducir(g, eti2);
 			cout << "\n\n La arista tiene un peso de: " << g.peso(v1, v2) << endl;
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 11:
 			system("cls");
@@ -255,10 +256,10 @@ void operadoresBasicos(Grafo& g) {
 				cout << " -El primer vertice es: " << g.getEtiqueta(g.primerVertice()) << endl;
 			}
 			else {
-				cout << " -El grafo esta vacio"<<endl;
+				cout << " -El grafo esta vacio" << endl;
 			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 12:
 			system("cls");
@@ -272,7 +273,7 @@ void operadoresBasicos(Grafo& g) {
 				cout << "\n\n -El vertice no tiene siguiente" << endl;
 			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 13:
 			system("cls");
@@ -286,7 +287,7 @@ void operadoresBasicos(Grafo& g) {
 				cout << "\n\n -El vertice no tiene aristas" << endl;
 			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 14:
 			system("cls");
@@ -296,14 +297,14 @@ void operadoresBasicos(Grafo& g) {
 			cin >> eti2;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			if (g.siguienteVerticeAdyacente(v1,v2)) {
-				cout << "\n\n -La siguiente arista de "<< g.getEtiqueta(v1) <<" es con: " << g.getEtiqueta(g.siguienteVerticeAdyacente(v1,v2)) << endl;
+			if (g.siguienteVerticeAdyacente(v1, v2)) {
+				cout << "\n\n -La siguiente arista de " << g.getEtiqueta(v1) << " es con: " << g.getEtiqueta(g.siguienteVerticeAdyacente(v1, v2)) << endl;
 			}
 			else {
 				cout << "\n\n -El vertice no tiene mas aristas" << endl;
 			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 15:
 			system("cls");
@@ -313,47 +314,47 @@ void operadoresBasicos(Grafo& g) {
 			cin >> eti2;
 			v1 = traducir(g, eti);
 			v2 = traducir(g, eti2);
-			if (g.existeArista(v1,v2)) {
+			if (g.existeArista(v1, v2)) {
 				cout << "\n\n -La arista existe!" << endl;
 			}
 			else {
 				cout << "\n\n -La arista NO existe" << endl;
 			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 16:
 			system("cls");
-			cout << "\n\t ---- Grafo No Dirigido ---\n\n -El grafo tiene "<< g.numAristas()<<" aristas"<<endl;
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n -El grafo tiene " << g.numAristas() << " aristas" << endl;
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 17:
 			system("cls");
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -El grafo tiene " << g.numVertices() << " vertices" << endl;
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 18:
 			system("cls");
 			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Digite el vertice: ";
 			cin >> eti;
 			v1 = traducir(g, eti);
-			cout << "\n\n El vertice tiene "<< g.numVerticesAdyacentes(v1)<<" aristas"<<endl;
+			cout << "\n\n El vertice tiene " << g.numVerticesAdyacentes(v1) << " aristas" << endl;
 			cout << "\n\n\tPulsa una tecla para continuar...";
-			getch();
+			_getch();
 			break;
 		case 19:
 			break;
 		default:
 			cout << "\n Opcion Invalida";
-			getch();
+			_getch();
 			break;
 		}
 	} while (opcion != 19);
 }
 
-void algoritmos(Grafo& g){
+void algoritmos(Grafo& g) {
 	int opcion = 0;
 	do {
 		system("cls");
@@ -405,7 +406,7 @@ void algoritmos(Grafo& g){
 			break;
 		}
 	} while (opcion != 13);
-}	
+}
 
 int main()
 {
