@@ -28,7 +28,7 @@ void profPrimeroR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& d
 	dvv.insert(grafo.getEtiqueta(actual));
 	cout << grafo.getEtiqueta(actual);
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
+	while (grafo.verticeValido(vAdy)) {
 		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
 			profPrimeroR(grafo, vAdy, dvv);
 		}
@@ -39,7 +39,7 @@ void profPrimero(Grafo& grafo) {
 	if (!grafo.vacio()) {
 		unordered_set<string> dvv;
 		Grafo::vertice vertActual = grafo.primerVertice();
-		while (vertActual) {
+		while (grafo.verticeValido(vertActual)) {
 			if (dvv.count(grafo.getEtiqueta(vertActual)) == 0) {
 				profPrimeroR(grafo, vertActual, dvv);
 			}
@@ -53,7 +53,7 @@ int tieneCiclosR(Grafo& grafo, Grafo::vertice& actual, Grafo::vertice& inicial, 
 	int tieneCiclo = 0;
 	dvv.insert(grafo.getEtiqueta(actual));
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
+	while (grafo.verticeValido(vAdy)) {
 		if (vAdy == inicial) {
 			++tieneCiclo;
 		}
@@ -69,7 +69,7 @@ int tieneCiclos(Grafo& g) {
 	if (!g.vacio()) {
 		unordered_set<string> dvv;
 		Grafo::vertice vertActual = g.primerVertice();
-		while (vertActual) {
+		while (g.verticeValido(vertActual)) {
 			if (dvv.count(g.getEtiqueta(vertActual)) == 0)
 			{
 				tieneCiclos += tieneCiclosR(g, vertActual, vertActual, dvv);
@@ -93,7 +93,7 @@ void aislarVertice(Grafo& grafo, Grafo::vertice& vert) {
 void caminoEntreTodosR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
 	dvv.insert(grafo.getEtiqueta(actual));
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
+	while (grafo.verticeValido(vAdy)) {
 		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
 			caminoEntreTodosR(grafo, vAdy, dvv);
 		}
@@ -129,7 +129,7 @@ int main()
 	g.agregarArista(d, f, 3.0);
 	g.agregarArista(s, f, 4.0);
 	//g.agregarArista(f, d, 5.0);
-	cout << caminoEntreTodos(g);
-	
+	cout << tieneCiclos(g);
+	cin.ignore();
 	return 0;
 }
