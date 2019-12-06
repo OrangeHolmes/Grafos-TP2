@@ -183,6 +183,21 @@ int ** Floyd(Grafo g){
 }
 
 
+ int** matriz = Floyd(g);
+    for (int i = 0; i < g.numVertices(); ++i) {
+        for (int j = 0; j < g.numVertices(); ++j) {
+            cout << matriz[i][j] << ",";
+        }      
+        cout << endl;
+    }
+    for (int i = 0; i < g.numVertices(); ++i) {
+            delete[] matriz[i];
+    }
+    delete[]matriz;
+
+
+
+
 //metodo aux
 int determinarMin(vector<double> valores, vector<bool> recorridos){
 	int min = 0;
