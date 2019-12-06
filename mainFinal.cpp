@@ -116,7 +116,7 @@ int caminoEntreTodos(Grafo& grafo) {
 }
 
 //i. Recorrido en Ancho Primero para despliegue de etiquetas en pantalla. 
-anchoPrimero(Grafo & grafo){
+void anchoPrimero(Grafo & grafo){
 	unordered_set <string> dvv ; //diccionarios vertices recorridos
 	queue <Grafo::vertice> cola;
 	Grafo::vertice verticeActual = grafo.primerVertice();
@@ -142,7 +142,7 @@ anchoPrimero(Grafo & grafo){
 	}
 }
 //metodo aux
-determinarMin(vector<double> valores, vector<bool> recorridos){
+int determinarMin(vector<double> valores, vector<bool> recorridos){
 	int min = 0;
 	for(int i=0;i < valores.size();++i){
 		if(valores[i] < valores[min] && recorridos[i] == false){
