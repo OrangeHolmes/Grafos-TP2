@@ -1,5 +1,5 @@
 #include "GrafoMatriz.h"
-
+using namespace std;
 
 Grafo::Vertice::Vertice() {
 	etiqueta = "";
@@ -27,11 +27,11 @@ void Grafo::vaciar() {
 }
 
 int Grafo::vacio() {
-	return (ultimoLleno = -1) ? 1 : 0;
+	return (ultimoLleno == -1) ? 1 : 0;
 }
 
 void Grafo::agregarVertice(string etiquetaRecibida) {
-	vectorVertices[++ultimoLleno] = Vertice();
+	vectorVertices[++ultimoLleno] = Vertice(etiquetaRecibida);
 	for (int i = 0; i < maxVertices; i++){
 		matrizAdyacencia[ultimoLleno][i] = pesoNulo;
 	}
@@ -134,23 +134,34 @@ int Grafo::numAristas() {
 }
 
 int Grafo::numVertices(){
-	return ultimoLleno;
+	return ultimoLleno+1;
 }
 
 int Grafo::numVerticesAdyacentes(vertice verticeEntrada){
 	return vectorVertices[verticeEntrada].numVerticesAdyacentes;
 }
-
-ostream& Grafo::Vertice::imprimir(ostream& salida){
+ostream& Grafo::Vertice::imprimir(ostream& salida) {
 	salida << etiqueta << " ";
 	return salida;
 }
 
 ostream& Grafo::imprimir(ostream& salida) {
-	salida << "{";
+	salida << "Vertices:\n{";
 	for (int i = 0; i <= ultimoLleno; ++i){
 		vectorVertices[i].imprimir(salida);
 	}
-	salida << "}";
+	salida << "}\nAristas:\n";
+	for (int i = 0; i <= ultimoLleno; ++i) {
+		for (int j = 0; j <= ultimoLleno; ++j) {
+			if (matrizAdyacencia[i][j] != pesoNulo && i<j) {
+				vectorVertices[i].imprimir(salida);
+				salida << "----------("<< matrizAdyacencia[i][j] <<")----------";
+				vectorVertices[j].imprimir(salida);
+				cout << endl;
+			}
+
+		}
+	}
+
 	return salida;
 }
