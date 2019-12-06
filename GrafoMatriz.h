@@ -2,14 +2,14 @@
 #define GRAFO_MATRIZADYACENCIA
 #include <iostream>
 #include <string>
-#define pesoNulo 3.14159265358979323846
+#include <iomanip>
+#define pesoNulo 10000.34
 #define maxVertices 30 
 using namespace std;
 
 
-class Grafo{ // Implmentación con matriz de adyacencia
+class Grafo { // ImplmentaciÃ³n con matriz de adyacencia
 	class Vertice; // Prototipo Vertice
-	typedef int vertice;
 private:
 	class Vertice {
 	public:
@@ -20,12 +20,13 @@ private:
 		~Vertice();
 		ostream& imprimir(ostream&);
 	};
-	
+
 	Vertice vectorVertices[maxVertices];
 	double matrizAdyacencia[maxVertices][maxVertices];
 	int ultimoLleno;
 	int contadorAristas;
 public:
+	typedef int vertice;
 	Grafo();
 	~Grafo();
 	void vaciar();
