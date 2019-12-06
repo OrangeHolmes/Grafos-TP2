@@ -59,6 +59,7 @@ public:
 	double peso(vertice, vertice);
 	vertice primerVertice();
 	vertice siguienteVertice(vertice);
+	int verticeValido(vertice);
 	vertice primerVerticeAdyacente(vertice);
 	vertice siguienteVerticeAdyacente(vertice, vertice);
 	int existeArista(vertice, vertice);

@@ -223,6 +223,10 @@ Grafo::vertice Grafo::siguienteVertice(vertice actual) {
 	return actual->siguiente;
 }
 
+int Grafo::verticeValido(vertice actual) {
+	return (actual) ? 1 : 0;
+}
+
 Grafo::vertice Grafo::primerVerticeAdyacente(vertice actual) {
 	return actual->sublista->primera->vertice;
 }
