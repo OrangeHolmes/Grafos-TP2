@@ -141,46 +141,77 @@ anchoPrimero(Grafo & grafo){
 		verticeActual = grafo.siguienteVertice(verticeActual);
 	}
 }
-
-// iv. Dijkstra.
-determinarMin(vector<int> valores, vector<int> recorridos){
+//metodo aux
+determinarMin(vector<double> valores, vector<bool> recorridos){
 	int min = 0;
 	for(int i=0;i < valores.size();++i){
 		if(valores[i] < valores[min] && recorridos[i] == false){
 			min = i;
 		}
 	}
-	return min;	
+	return min;
 }
 
-
+// iv. Dijkstra.
 dijkstra(Grafo grafo, Grafo::vertice inicio){
 	vector<double> valoresMinimos;
+	vector<string> masCercano;
 	vector<bool> recorridos;
 	map<int, Grafo::vertice> relacion;
 	Grafo::vertice verticeActual = grafo.primerVertice();
 
 	for(int i=0; i < grafo.numVert();++i){
 		relacion.insert( pair<int, Vertice> (i, verticeActual) );
-		valoresMinimos[i] = double(INT_MAX);
+		valoresMinimos[i] = INT_MAX;
 		recorridos[i] = false;
+		masCercano[i] = "-";
 		verticeActual = grafo.siguienteVertice(verticeActual);
-	}
-	
+	}	
 	map<int,Grafo::vertice>::iterator i = relacion.find(inicio);
 	valoresMinimos[i->second] = 0;
 
-	
-	
 	for(int j = 0; j < grafo.numVert()-1; ++j ){              
 		int min = determinarMin(valoresMinimos,recorridos);
+		recorridos[min] = true;
+		Grafo::vertice vMin = relacion[min];	
+		for(int k = 0; k < grafo.numVert(); ++k){                  
+			Grafo::vertice vK = relacion[k]; 
+ 			if(grafo.peso(vMin,vK) + valoresMinimos[min] < valoresMinimos[k]){    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
+				valoresMinimos[k] = grafo.peso(vMin,vK) + valoresMinimos[min];
+				masCercano[k] = grafo.getEtiqueta(vMin);
+			}
+		}
+	}
+}
+
+//viii. Prim
+prim(Grafo grafo){
+	vector<int> menorCosto;
+	vector<string> masCercano;
+	vector<bool> recorridos;
+	map<int, Grafo::vertice> relacion;
+	Grafo::vertice verticeActual = grafo.primerVertice();
+
+	for(int i=0; i < grafo.numVert();++i){
+		relacion.insert( pair<int, Vertice> (i, verticeActual) );
+		menorCosto[i] = double(INT_MAX);
+		recorridos[i] = false;
+		masCercano[i] = "-";
+		verticeActual = grafo.siguienteVertice(verticeActual);
+	}	
+	map<int,Grafo::vertice>::iterator i = relacion.find(verticeActual);
+	menorCosto[i->second] = 0;
+
+	for(int j = 0; j < grafo.numVert()-1; ++j ){              
+		int min = determinarMin(menorCosto,recorridos);
 		recorridos[min] = true;
 		Grafo::vertice vMin = relacion[min];
 		
 		for(int k = 0; k < grafo.numVert(); ++k){                  
 			Grafo::vertice vK = relacion[k]; 
- 			if(grafo.peso(vMin,vK) < valoresMinimos[k]){    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
-				valoresMinimos[k] = grafo.peso(vMin,vK);   
+ 			if(!recorridos[k] && grafo.peso(vMin,vK) < valoresMinimos[k]){    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
+				valoresMinimos[k] = grafo.peso(vMin,vK);
+				masCercano[k] = grafo.getEtiqueta(vMin);   
 			}
 		}
 	}
