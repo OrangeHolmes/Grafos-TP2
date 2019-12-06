@@ -192,79 +192,57 @@ int caminoEntreTodos(Grafo& grafo) {
 	return conexo;
 }
 
-
-
-
-// iv. Dijkstra.
-determinarMin(vector<double> valores, vector<bool> recorridos) {
-	int min = 0;
+//metodo aux
+int determinarMin(vector<double> & valores, vector<bool> & recorridos) {
+	int min, minV = INT_MAX;
+	
 	for (int i = 0; i < valores.size(); ++i) {
-		if (valores[i] < valores[min] && recorridos[i] == false) {
+		if (valores[i] < minV && recorridos[i] == false) {
 			min = i;
+			minV = valores[i];
 		}
 	}
 	return min;
 }
-dijkstra(Grafo grafo, Grafo::vertice inicio){
+
+// iv. Dijkstra.
+void dijkstra(Grafo grafo, Grafo::vertice inicio) {
 	vector<double> valoresMinimos;
 	vector<string> masCercano;
 	vector<bool> recorridos;
 	map<int, Grafo::vertice> relacion;
 	Grafo::vertice verticeActual = grafo.primerVertice();
 
-	for(int i=0; i < grafo.numVert();++i){
-		relacion.insert( pair<int, Vertice> (i, verticeActual) );
-		valoresMinimos[i] = INT_MAX;
-		recorridos[i] = false;
-		masCercano[i] = "-";
+	for (int i = 0; i < grafo.numVertices(); ++i) {
+		relacion.insert(pair<int, Grafo::vertice>(i, verticeActual));
+		valoresMinimos.push_back(double(100.0));
+		masCercano.push_back("-");
+		recorridos.push_back(false);
+		if (grafo.getEtiqueta(inicio) == grafo.getEtiqueta(verticeActual)) {
+			valoresMinimos[i] = 0;
+		}
 		verticeActual = grafo.siguienteVertice(verticeActual);
-	}	
-	map<int,Grafo::vertice>::iterator i = relacion.find(inicio);
-	valoresMinimos[i->second] = 0;
+	}
 
-	for(int j = 0; j < grafo.numVert()-1; ++j ){              
-		int min = determinarMin(valoresMinimos,recorridos);
+	for (int j = 0; j < grafo.numVertices()-1 ; ++j) {
+		int min = determinarMin(valoresMinimos, recorridos);
 		recorridos[min] = true;
-		Grafo::vertice vMin = relacion[min];	
-		for(int k = 0; k < grafo.numVert(); ++k){                  
-			Grafo::vertice vK = relacion[k]; 
- 			if(grafo.peso(vMin,vK) + valoresMinimos[min] < valoresMinimos[k]){    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
-				valoresMinimos[k] = grafo.peso(vMin,vK) + valoresMinimos[min];
-				masCercano[k] = grafo.getEtiqueta(vMin);
+		Grafo::vertice vMin = relacion[min];
+		for (int k = 0; k < grafo.numVertices(); ++k) {
+			Grafo::vertice vK = relacion[k];
+			if (grafo.getEtiqueta(vMin) != grafo.getEtiqueta(vK) && grafo.existeArista(vMin, vK)) {
+				if (grafo.peso(vMin, vK) + valoresMinimos[min] < valoresMinimos[k]) {    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
+					valoresMinimos[k] = grafo.peso(vMin, vK) + valoresMinimos[min];
+					masCercano[k] = grafo.getEtiqueta(vMin);
+					cout << valoresMinimos[k] << endl;
+				}
 			}
 		}
 	}
-}
-
-//viii. Prim
-prim(Grafo grafo) {
-	vector<int> menorCosto;
-	vector<string> masCercano;
-	vector<bool> recorridos;
-	map<int, Grafo::vertice> relacion;
-	Grafo::vertice verticeActual = grafo.primerVertice();
-
-	for (int i = 0; i < grafo.numVert(); ++i) {
-		relacion.insert(pair<int, Vertice>(i, verticeActual));
-		menorCosto[i] = double(INT_MAX);
-		recorridos[i] = false;
-		masCercano[i] = "-";
-		verticeActual = grafo.siguienteVertice(verticeActual);
-	}
-	map<int, Grafo::vertice>::iterator i = relacion.find(verticeActual);
-	menorCosto[i->second] = 0;
-
-	for (int j = 0; j < grafo.numVert() - 1; ++j) {
-		int min = determinarMin(menorCosto, recorridos);
-		recorridos[min] = true;
-		Grafo::vertice vMin = relacion[min];
-
-		for (int k = 0; k < grafo.numVert(); ++k) {
-			Grafo::vertice vK = relacion[k];
-			if (!recorridos[k] && grafo.peso(vMin, vK) < valoresMinimos[k]) {    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
-				valoresMinimos[k] = grafo.peso(vMin, vK);
-				masCercano[k] = grafo.getEtiqueta(vMin);
-			}
+	for (int i = 0; i < valoresMinimos.size(); ++i) {
+		if (grafo.getEtiqueta(relacion[i]) != grafo.getEtiqueta(inicio)) {
+			cout << "La distancia minima para llegar al vertice " << grafo.getEtiqueta(relacion[i]) << " desde " << grafo.getEtiqueta(inicio) <<
+				" es de " << valoresMinimos[i] << endl;
 		}
 	}
 }
