@@ -111,6 +111,56 @@ int tieneCiclos(Grafo& g) {
 	return (tieneCiclos) ? 1 : 0;
 }
 
+// v. Floyd
+void floyd(Grafo g) {
+	int vertTotales = g.numVertices();
+	int ** matrizCostos = new int*[vertTotales];
+	map<int, Grafo::vertice> relacion1a1;
+	auto vertice1 = g.primerVertice();
+	Grafo::vertice vertice2;
+	for (int i = 0; i < vertTotales; ++i) {
+		relacion1a1.insert(pair<int, Grafo::vertice>(i, vertice1));
+		vertice2 = g.primerVertice();
+		matrizCostos[i] = new int[vertTotales];
+		for (int j = 0; j < vertTotales; ++j) {
+			matrizCostos[i][j] = 1000000000; //Analogo a infinito
+			if (g.existeArista(vertice1, vertice2)) {
+				matrizCostos[i][j] = g.peso(vertice1, vertice2);
+			}
+			else if (i == j) {
+				matrizCostos[i][j] = 0;
+			}
+			vertice2 = g.siguienteVertice(vertice2);
+		}
+		vertice1 = g.siguienteVertice(vertice1);
+	}
+	Grafo::vertice pivote;
+	for (int k = 0; k < vertTotales; ++k) {
+		pivote = relacion1a1[k];
+		vertice1 = g.primerVertice();
+		for (int i = 0; i < vertTotales; ++i) {
+			vertice2 = g.primerVertice();
+			for (int j = 0; j < vertTotales; ++j) {
+				if (matrizCostos[i][j] > (matrizCostos[i][k] + matrizCostos[k][j])) {
+					matrizCostos[i][j] = matrizCostos[i][k] + matrizCostos[k][j];
+				}
+			}
+			vertice1 = g.siguienteVertice(vertice1);
+		}
+	}
+	//Imprimir Resultados
+	for (int i = 0; i < g.numVertices(); ++i) {
+		for (int j = 0; j < g.numVertices(); ++j) {
+			cout << matrizCostos[i][j] << ",";
+		}
+		cout << endl;
+	}
+	for (int i = 0; i < g.numVertices(); ++i) {
+		delete[] matrizCostos[i];
+	}
+	delete[]matrizCostos;
+}
+
 //x. Aislar un Vertice										 -*-*- SIRVE
 void aislarVertice(Grafo& grafo, Grafo::vertice& vert) {
 	Grafo::vertice vAdy;
@@ -141,62 +191,6 @@ int caminoEntreTodos(Grafo& grafo) {
 	}
 	return conexo;
 }
-
-int ** Floyd(Grafo g){
-    int vertTotales = g.numVertices();
-    int ** matrizCostos = new int*[vertTotales];
-    map<int, Grafo::vertice> relacion1a1;
-    auto vertice1 = g.primerVertice();
-    Grafo::vertice vertice2;
-    for (int i = 0; i < vertTotales; ++i){
-        relacion1a1.insert(pair<int, Grafo::vertice>(i, vertice1));
-        vertice2 = g.primerVertice();
-        matrizCostos[i] = new int[vertTotales];
-        for (int j = 0; j < vertTotales; ++j) {
-            matrizCostos[i][j] = 1000000000; //Analogo a infinito
-            if (g.existeArista(vertice1, vertice2)) {
-                matrizCostos[i][j] = g.peso(vertice1,vertice2);
-            }
-            else if (i == j) {
-                matrizCostos[i][j] = 0;
-            }
-            vertice2 = g.siguienteVertice(vertice2);
-        }
-        vertice1 = g.siguienteVertice(vertice1);
-    }
-    Grafo::vertice pivote;
-
-    for (int k = 0; k < vertTotales; ++k){
-        pivote = relacion1a1[k];
-        vertice1 = g.primerVertice();
-        for (int i = 0; i < vertTotales; ++i) {
-            vertice2 = g.primerVertice();
-            for (int j = 0; j < vertTotales; ++j) {
-                if (matrizCostos[i][j] > (matrizCostos[i][k] + matrizCostos[k][j])) {
-                    matrizCostos[i][j] = matrizCostos[i][k] + matrizCostos[k][j];
-                }
-            }
-            vertice1 = g.siguienteVertice(vertice1);
-        }
-    }
-    return matrizCostos;
-}
-
-
- int** matriz = Floyd(g);
-    for (int i = 0; i < g.numVertices(); ++i) {
-        for (int j = 0; j < g.numVertices(); ++j) {
-            cout << matriz[i][j] << ",";
-        }      
-        cout << endl;
-    }
-    for (int i = 0; i < g.numVertices(); ++i) {
-            delete[] matriz[i];
-    }
-    delete[]matriz;
-
-
-
 
 //metodo aux
 int determinarMin(vector<double> valores, vector<bool> recorridos){
