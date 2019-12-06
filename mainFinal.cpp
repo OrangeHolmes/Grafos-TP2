@@ -27,35 +27,120 @@ Grafo::vertice traducir(Grafo& g, string etiq) {
 
 //----- INICIO ALGORITMOS -----
 
+//i. Recorrido en Ancho Primero para despliegue de etiquetas en pantalla.			-*-*- SIRVE
+void anchoPrimero(Grafo & grafo) {
+	unordered_set <string> dvv; //diccionarios vertices recorridos
+	queue <Grafo::vertice> cola;
+	Grafo::vertice verticeActual = grafo.primerVertice();
+
+	while (grafo.verticeValido(verticeActual)) {
+		if (!dvv.count(grafo.getEtiqueta(verticeActual))) {
+			cola.push(verticeActual);
+			dvv.insert(grafo.getEtiqueta(verticeActual));
+			while (!cola.empty()) {
+				Grafo::vertice verticeP = cola.front();
+				cola.pop();
+				cout << grafo.getEtiqueta(verticeP) << " ";
+				Grafo::vertice verticeAdy = grafo.primerVerticeAdyacente(verticeP);
+				while (grafo.verticeValido(verticeAdy)) {
+					if (!dvv.count(grafo.getEtiqueta(verticeAdy))) {
+						cola.push(verticeAdy);
+						dvv.insert(grafo.getEtiqueta(verticeAdy));
+					}
+					verticeAdy = grafo.siguienteVerticeAdyacente(verticeP, verticeAdy);
+				}
+			}
+		}
+		verticeActual = grafo.siguienteVertice(verticeActual);
+	}
+}
 //ii. Recorrido en Profundidad Primero para despliegue de etiquetas en pantalla.	-*-*- SIRVE
 void profPrimeroR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
-    dvv.insert(grafo.getEtiqueta(actual));
-    cout << grafo.getEtiqueta(actual);
-    auto vAdy = grafo.primerVerticeAdyacente(actual);
-    while (grafo.verticeValido(vAdy)) {
-        if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
-            profPrimeroR(grafo, vAdy, dvv);
-        }
-        vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
-    }
+	dvv.insert(grafo.getEtiqueta(actual));
+	cout << grafo.getEtiqueta(actual);
+	auto vAdy = grafo.primerVerticeAdyacente(actual);
+	while (vAdy) {
+		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
+			profPrimeroR(grafo, vAdy, dvv);
+		}
+		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
+	}
 }
-
 void profPrimero(Grafo& grafo) {
-    if (!grafo.vacio()) {
-        unordered_set<string> dvv;
-        Grafo::vertice vertActual = grafo.primerVertice();
-        while (grafo.verticeValido(vertActual)) {
-            if (dvv.count(grafo.getEtiqueta(vertActual)) == 0) {
-                profPrimeroR(grafo, vertActual, dvv);
-            }
-            vertActual = grafo.siguienteVertice(vertActual);
-        }
-    }
+	if (!grafo.vacio()) {
+		unordered_set<string> dvv;
+		Grafo::vertice vertActual = grafo.primerVertice();
+		while (vertActual) {
+			if (dvv.count(grafo.getEtiqueta(vertActual)) == 0) {
+				profPrimeroR(grafo, vertActual, dvv);
+			}
+			vertActual = grafo.siguienteVertice(vertActual);
+		}
+	}
 }
 
+//iii. Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero		-*-*- SIRVE
+int tieneCiclosR(Grafo& grafo, Grafo::vertice& actual, Grafo::vertice& anterior, Grafo::vertice& inicial, unordered_set<string>& dvv) {
+	int tieneCiclo = 0;
+	dvv.insert(grafo.getEtiqueta(actual));
+	auto vAdy = grafo.primerVerticeAdyacente(actual);
+	while (grafo.verticeValido(vAdy)) {
+		if (vAdy == inicial && anterior != inicial) {
+			++tieneCiclo;
+		}
+		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
+			tieneCiclo += tieneCiclosR(grafo, vAdy, actual, inicial, dvv);
+		}
+		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
+	}
+	return tieneCiclo;
+}
+int tieneCiclos(Grafo& g) {
+	int tieneCiclos = 0;
+	if (!g.vacio()) {
+		unordered_set<string> dvv;
+		Grafo::vertice vertActual = g.primerVertice();
+		while (g.verticeValido(vertActual)) {
+			if (dvv.count(g.getEtiqueta(vertActual)) == 0)
+			{
+				tieneCiclos += tieneCiclosR(g, vertActual, vertActual, vertActual, dvv);
+			}
+			vertActual = g.siguienteVertice(vertActual);
+		}
+	}
+	return (tieneCiclos) ? 1 : 0;
+}
 
+//x. Aislar un Vertice										 -*-*- SIRVE
+void aislarVertice(Grafo& grafo, Grafo::vertice& vert) {
+	Grafo::vertice vAdy;
+	while (grafo.numVerticesAdyacentes(vert)) {
+		vAdy = grafo.primerVerticeAdyacente(vert);
+		grafo.eliminarArista(vert, vAdy);
+	}
+}
 
-
+//xii. Averiguar si existe camino entre todo par de vértices  -*-*- SIRVE
+void caminoEntreTodosR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
+	dvv.insert(grafo.getEtiqueta(actual));
+	auto vAdy = grafo.primerVerticeAdyacente(actual);
+	while (vAdy) {
+		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
+			caminoEntreTodosR(grafo, vAdy, dvv);
+		}
+		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
+	}
+}
+int caminoEntreTodos(Grafo& grafo) {
+	int conexo = 0;
+	if (!grafo.vacio()) {
+		unordered_set<string> dvv;
+		auto vertActual = grafo.primerVertice();
+		caminoEntreTodosR(grafo, vertActual, dvv);
+		conexo = (dvv.size() == grafo.numVertices());
+	}
+	return conexo;
+}
 
 int ** Floyd(Grafo g){
     int vertTotales = g.numVertices();
@@ -98,99 +183,6 @@ int ** Floyd(Grafo g){
 }
 
 
-
-
-
-
-//iii. Averiguar si un grafo tiene ciclos usando el Recorrido en Profundidad Primero		-*-*- NO SIRVE
-int tieneCiclosR(Grafo& grafo, Grafo::vertice& actual, Grafo::vertice& inicial, unordered_set<string>& dvv) {
-	int tieneCiclo = 0;
-	dvv.insert(grafo.getEtiqueta(actual));
-	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
-		if (vAdy == inicial) {
-			++tieneCiclo;
-		}
-		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
-			tieneCiclo += tieneCiclosR(grafo, vAdy, inicial, dvv);
-		}
-		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
-	}
-	return tieneCiclo;
-}
-int tieneCiclos(Grafo& g) {
-	int tieneCiclos = 0;
-	if (!g.vacio()) {
-		unordered_set<string> dvv;
-		Grafo::vertice vertActual = g.primerVertice();
-		while (vertActual) {
-			if (dvv.count(g.getEtiqueta(vertActual)) == 0)
-			{
-				tieneCiclos += tieneCiclosR(g, vertActual, vertActual, dvv);
-			}
-			vertActual = g.siguienteVertice(vertActual);
-		}
-	}
-	return (tieneCiclos) ? 1 : 0;
-}
-
-//x. Aislar un Vertice										 -*-*- SIRVE
-void aislarVertice(Grafo& grafo, Grafo::vertice& vert) {
-	Grafo::vertice vAdy;
-	while (grafo.numVerticesAdyacentes(vert)) {
-		vAdy = grafo.primerVerticeAdyacente(vert);
-		grafo.eliminarArista(vert, vAdy);
-	}
-}
-
-//xii. Averiguar si existe camino entre todo par de vértices  -*-*- SIRVE
-void caminoEntreTodosR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
-	dvv.insert(grafo.getEtiqueta(actual));
-	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
-		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
-			caminoEntreTodosR(grafo, vAdy, dvv);
-		}
-		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
-	}
-}
-int caminoEntreTodos(Grafo& grafo) {
-	int conexo = 0;
-	if (!grafo.vacio()) {
-		unordered_set<string> dvv;
-		auto vertActual = grafo.primerVertice();
-		caminoEntreTodosR(grafo, vertActual, dvv);
-		conexo = (dvv.size() == grafo.numVertices());
-	}
-	return conexo;
-}
-
-//i. Recorrido en Ancho Primero para despliegue de etiquetas en pantalla. 
-void anchoPrimero(Grafo & grafo){
-	unordered_set <string> dvv ; //diccionarios vertices recorridos
-	queue <Grafo::vertice> cola;
-	Grafo::vertice verticeActual = grafo.primerVertice();
-
-	while(grafo.verticeValido(verticeActual)){
-		if(!dvv.count(grafo.getEtiqueta(verticeActual))){	
-			cola.push(verticeActual);
-			dvv.insert(grafo.getEtiqueta(verticeActual));
-			while(!cola.empty()){
-				Grafo::vertice verticeP = cola.pop();
-				cout << grafo.getEtiqueta(verticeP) << " ";
-				Grafo::vertice verticeAdy = grafo.primerVerticeAdyacente(verticeP);
-				while(grafo.verticeValido(verticeAdy)){
-					if(!dvv.count(grafo.getEtiqueta(verticeAdy))){	
-						cola.push(verticeAdy);
-						dvv.insert(grafo.getEtiqueta(verticeAdy));
-					}
-					verticeAdy = grafo.siguienteVerticeAdyacente(verticeP,verticeAdy);
-				}
-			}
-		}
-		verticeActual = grafo.siguienteVertice(verticeActual);
-	}
-}
 //metodo aux
 int determinarMin(vector<double> valores, vector<bool> recorridos){
 	int min = 0;
