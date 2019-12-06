@@ -155,14 +155,14 @@ determinarMin(vector<int> valores, vector<int> recorridos){
 
 
 dijkstra(Grafo grafo, Grafo::vertice inicio){
-	vector<int> valoresMinimos;
+	vector<double> valoresMinimos;
 	vector<bool> recorridos;
 	map<int, Grafo::vertice> relacion;
 	Grafo::vertice verticeActual = grafo.primerVertice();
 
 	for(int i=0; i < grafo.numVert();++i){
 		relacion.insert( pair<int, Vertice> (i, verticeActual) );
-		valoresMinimos[i] = INT_MAX;
+		valoresMinimos[i] = double(INT_MAX);
 		recorridos[i] = false;
 		verticeActual = grafo.siguienteVertice(verticeActual);
 	}
