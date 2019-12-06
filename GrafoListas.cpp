@@ -263,18 +263,26 @@ int Grafo::numVerticesAdyacentes(vertice origen) {
 }
 ////////////VAMOS TIIM
 
-ostream & Grafo::imprimir( ostream & salida){
-	salida << "{ ";
-	if(primer){
-	   primer->imprimir(salida);
+ostream& Grafo::imprimir(ostream& salida) {
+	vertice actual = primer;
+	salida << "Vertices:\n{";
+	for (int i = 0; i < contVertices; ++i) {
+		salida << actual->etiqueta << " ";
+		actual = actual->siguiente;
 	}
-	salida << " }";
-	return salida;
-}
-ostream & Grafo::Vertice::imprimir( ostream & salida){
-	salida << etiqueta << " ";
-	if(siguiente){
-		siguiente->imprimir(salida);
+	salida << "}\nAristas:\n";
+	actual = primer;
+	Vertice::ListaAristas::Arista *  arista;
+	for (int i = 0; i < contVertices; ++i) {
+		arista = actual->sublista->primera;
+		for (int j = 0; j < actual->sublista->contAristas; ++j) {
+			salida << actual->etiqueta;
+			salida << "----------(" << arista->valArista << ")----------";
+			salida <<arista->vertice->etiqueta;
+			cout << endl;
+			arista = arista->siguiente;
+		}
+		actual = actual->siguiente;
 	}
 	return salida;
 }

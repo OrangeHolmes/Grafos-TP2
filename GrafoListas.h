@@ -1,6 +1,7 @@
 #ifndef LISTA_LISTAS
 #define LISTA_LISTAS
 #include<iostream>
+#include<string>
 using namespace std;
 
 class Grafo {	//LISTA DE VERTICES
@@ -20,7 +21,6 @@ private:
 		Vertice();
 		Vertice(string);
   		~Vertice();
-  		ostream & imprimir( ostream &);
 
 		class ListaAristas {  //LISTA DE ARISTAS
 			class Arista; // ARISTA
