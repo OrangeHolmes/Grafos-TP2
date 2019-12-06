@@ -2,6 +2,10 @@
 #include <stdlib.h> //Para usar system("cls");
 #include <conio.h> //Para usar _getch();
 #include <unordered_set>
+#include <bits/stdc++.h>  
+#include <vector>
+#include <utility> 
+#include <map>
 
 #include "GrafoListas.h"
 //#include "GrafoMatriz.h"
@@ -109,6 +113,45 @@ void caminoEntreTodosR(Grafo grafo, Grafo::vertice actual, unordered_set<string>
 			caminoEntreTodosR(grafo, vAdy, dvv);
 		}
 		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
+	}
+}
+
+//iv. Dijkstra.
+determinarMin(vector<int> valores, vector<int> recorridos){
+	int min = 0;
+	for(int i=0;i < valores.size();++i){
+		if(valores[i] < valores[min] && recorridos[i] == false){
+			min = i;
+		}
+	}
+	return min;	
+}
+
+dijkstra(Grafo grafo, Grafo::Vertice inicio){
+	vector<int> valoresMinimos;
+	vector<bool> recorridos;
+	map<int, Grafo::Vertice> relacion;
+	Grafo::Vertice verticeActual = grafo.primerVertice();
+	
+	for(int i=0; i < grafo.numVert();++i){
+		relacion.insert( pair<int, Vertice> (i, verticeActual) );
+		valoresMinimos[i] = INT_MAX;
+		recorridos[i] = false;
+		verticeActual = grafo.siguienteVertice(verticeActual);
+	}
+	map<int,Grafo::Vertice>::iterator i = relacion.find(inicio);
+	valoresMinimos[i->second] = 0;
+	
+	for(int j = 0; j < grafo.numVert()-1; ++j ){              
+		int min = determinarMin(valoresMinimos,recorridos);
+		recorridos[min] = true;
+		Grafo::Vertice vMin = relacion[min];
+		for(int k = 0; k < grafo.numVert(); ++k){                  
+			Grafo::Vertice vK = relacion[k]; 
+ 			if(grafo.peso(vMin,vK) < valoresMinimos[k]){    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
+				valoresMinimos[k] = grafo.peso(vMin,vK);   
+			}
+		}
 	}
 }
 
