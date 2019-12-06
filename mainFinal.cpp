@@ -57,7 +57,45 @@ void profPrimero(Grafo& grafo) {
 
 
 
+int ** Floyd(Grafo g){
+    int vertTotales = g.numVertices();
+    int ** matrizCostos = new int*[vertTotales];
+    map<int, Grafo::vertice> relacion1a1;
+    auto vertice1 = g.primerVertice();
+    Grafo::vertice vertice2;
+    for (int i = 0; i < vertTotales; ++i){
+        relacion1a1.insert(pair<int, Grafo::vertice>(i, vertice1));
+        vertice2 = g.primerVertice();
+        matrizCostos[i] = new int[vertTotales];
+        for (int j = 0; j < vertTotales; ++j) {
+            matrizCostos[i][j] = 1000000000; //Analogo a infinito
+            if (g.existeArista(vertice1, vertice2)) {
+                matrizCostos[i][j] = g.peso(vertice1,vertice2);
+            }
+            else if (i == j) {
+                matrizCostos[i][j] = 0;
+            }
+            vertice2 = g.siguienteVertice(vertice2);
+        }
+        vertice1 = g.siguienteVertice(vertice1);
+    }
+    Grafo::vertice pivote;
 
+    for (int k = 0; k < vertTotales; ++k){
+        pivote = relacion1a1[k];
+        vertice1 = g.primerVertice();
+        for (int i = 0; i < vertTotales; ++i) {
+            vertice2 = g.primerVertice();
+            for (int j = 0; j < vertTotales; ++j) {
+                if (matrizCostos[i][j] > (matrizCostos[i][k] + matrizCostos[k][j])) {
+                    matrizCostos[i][j] = matrizCostos[i][k] + matrizCostos[k][j];
+                }
+            }
+            vertice1 = g.siguienteVertice(vertice1);
+        }
+    }
+    return matrizCostos;
+}
 
 
 
