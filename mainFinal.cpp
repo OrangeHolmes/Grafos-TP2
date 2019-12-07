@@ -111,6 +111,61 @@ int tieneCiclos(Grafo& g) {
 	return (tieneCiclos) ? 1 : 0;
 }
 
+// iv. Dijkstra.
+//metodo aux
+int determinarMin(vector<double> & valores, vector<bool> & recorridos) {
+	int min, minV = INT_MAX;
+	
+	for (int i = 0; i < valores.size(); ++i) {
+		if (valores[i] < minV && recorridos[i] == false) {
+			min = i;
+			minV = valores[i];
+		}
+	}
+	return min;
+}
+
+void dijkstra(Grafo & grafo, Grafo::vertice inicio) {
+	vector<double> valoresMinimos;
+	vector<string> masCercano;
+	vector<bool> recorridos;
+	map<int, Grafo::vertice> relacion;
+	Grafo::vertice verticeActual = grafo.primerVertice();
+
+	for (int i = 0; i < grafo.numVertices(); ++i) {
+		relacion.insert(pair<int, Grafo::vertice>(i, verticeActual));
+		valoresMinimos.push_back(double(100.0));
+		masCercano.push_back("-");
+		recorridos.push_back(false);
+		if (grafo.getEtiqueta(inicio) == grafo.getEtiqueta(verticeActual)) {
+			valoresMinimos[i] = 0;
+		}
+		verticeActual = grafo.siguienteVertice(verticeActual);
+	}
+
+	for (int j = 0; j < grafo.numVertices()-1 ; ++j) {
+		int min = determinarMin(valoresMinimos, recorridos);
+		recorridos[min] = true;
+		Grafo::vertice vMin = relacion[min];
+		for (int k = 0; k < grafo.numVertices(); ++k) {
+			Grafo::vertice vK = relacion[k];
+			if (grafo.getEtiqueta(vMin) != grafo.getEtiqueta(vK) && grafo.existeArista(vMin, vK)) {
+				if (grafo.peso(vMin, vK) + valoresMinimos[min] < valoresMinimos[k]) {    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
+					valoresMinimos[k] = grafo.peso(vMin, vK) + valoresMinimos[min];
+					masCercano[k] = grafo.getEtiqueta(vMin);
+					cout << valoresMinimos[k] << endl;
+				}
+			}
+		}
+	}
+	for (int i = 0; i < valoresMinimos.size(); ++i) {
+		if (grafo.getEtiqueta(relacion[i]) != grafo.getEtiqueta(inicio)) {
+			cout << "La distancia minima para llegar al vertice " << grafo.getEtiqueta(relacion[i]) << " desde " << grafo.getEtiqueta(inicio) <<
+				" es de " << valoresMinimos[i] << endl;
+		}
+	}
+}
+
 //v. Floyd													*-*-*-* SIRVE
 void floyd(Grafo g) {
 	int vertTotales = g.numVertices();
@@ -161,92 +216,6 @@ void floyd(Grafo g) {
 	delete[]matrizCostos;
 }
 
-//x. Aislar un Vertice										 -*-*- SIRVE
-void aislarVertice(Grafo& grafo, Grafo::vertice& vert) {
-	Grafo::vertice vAdy;
-	while (grafo.numVerticesAdyacentes(vert)) {
-		vAdy = grafo.primerVerticeAdyacente(vert);
-		grafo.eliminarArista(vert, vAdy);
-	}
-}
-
-//xii. Averiguar si existe camino entre todo par de vértices  -*-*- SIRVE
-void caminoEntreTodosR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
-	dvv.insert(grafo.getEtiqueta(actual));
-	auto vAdy = grafo.primerVerticeAdyacente(actual);
-	while (vAdy) {
-		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
-			caminoEntreTodosR(grafo, vAdy, dvv);
-		}
-		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
-	}
-}
-int caminoEntreTodos(Grafo& grafo) {
-	int conexo = 0;
-	if (!grafo.vacio()) {
-		unordered_set<string> dvv;
-		auto vertActual = grafo.primerVertice();
-		caminoEntreTodosR(grafo, vertActual, dvv);
-		conexo = (dvv.size() == grafo.numVertices());
-	}
-	return conexo;
-}
-
-//metodo aux
-int determinarMin(vector<double> & valores, vector<bool> & recorridos) {
-	int min, minV = INT_MAX;
-	
-	for (int i = 0; i < valores.size(); ++i) {
-		if (valores[i] < minV && recorridos[i] == false) {
-			min = i;
-			minV = valores[i];
-		}
-	}
-	return min;
-}
-
-// iv. Dijkstra.
-void dijkstra(Grafo & grafo, Grafo::vertice inicio) {
-	vector<double> valoresMinimos;
-	vector<string> masCercano;
-	vector<bool> recorridos;
-	map<int, Grafo::vertice> relacion;
-	Grafo::vertice verticeActual = grafo.primerVertice();
-
-	for (int i = 0; i < grafo.numVertices(); ++i) {
-		relacion.insert(pair<int, Grafo::vertice>(i, verticeActual));
-		valoresMinimos.push_back(double(100.0));
-		masCercano.push_back("-");
-		recorridos.push_back(false);
-		if (grafo.getEtiqueta(inicio) == grafo.getEtiqueta(verticeActual)) {
-			valoresMinimos[i] = 0;
-		}
-		verticeActual = grafo.siguienteVertice(verticeActual);
-	}
-
-	for (int j = 0; j < grafo.numVertices()-1 ; ++j) {
-		int min = determinarMin(valoresMinimos, recorridos);
-		recorridos[min] = true;
-		Grafo::vertice vMin = relacion[min];
-		for (int k = 0; k < grafo.numVertices(); ++k) {
-			Grafo::vertice vK = relacion[k];
-			if (grafo.getEtiqueta(vMin) != grafo.getEtiqueta(vK) && grafo.existeArista(vMin, vK)) {
-				if (grafo.peso(vMin, vK) + valoresMinimos[min] < valoresMinimos[k]) {    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
-					valoresMinimos[k] = grafo.peso(vMin, vK) + valoresMinimos[min];
-					masCercano[k] = grafo.getEtiqueta(vMin);
-					cout << valoresMinimos[k] << endl;
-				}
-			}
-		}
-	}
-	for (int i = 0; i < valoresMinimos.size(); ++i) {
-		if (grafo.getEtiqueta(relacion[i]) != grafo.getEtiqueta(inicio)) {
-			cout << "La distancia minima para llegar al vertice " << grafo.getEtiqueta(relacion[i]) << " desde " << grafo.getEtiqueta(inicio) <<
-				" es de " << valoresMinimos[i] << endl;
-		}
-	}
-}
-
 //viii. Prim
 void prim(Grafo & grafo) {
 	vector<double> menorCosto;
@@ -283,6 +252,38 @@ void prim(Grafo & grafo) {
 		cout << "Llegamos al vertice " <<grafo.getEtiqueta(relacion[i])<< ", a partir del vertice "<< masCercano[i] << ", con un valor de "<< menorCosto[i] << endl;
 	}
 }
+
+//x. Aislar un Vertice										 -*-*- SIRVE
+void aislarVertice(Grafo& grafo, Grafo::vertice& vert) {
+	Grafo::vertice vAdy;
+	while (grafo.numVerticesAdyacentes(vert)) {
+		vAdy = grafo.primerVerticeAdyacente(vert);
+		grafo.eliminarArista(vert, vAdy);
+	}
+}
+
+//xii. Averiguar si existe camino entre todo par de vértices  -*-*- SIRVE
+void caminoEntreTodosR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
+	dvv.insert(grafo.getEtiqueta(actual));
+	auto vAdy = grafo.primerVerticeAdyacente(actual);
+	while (vAdy) {
+		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
+			caminoEntreTodosR(grafo, vAdy, dvv);
+		}
+		vAdy = grafo.siguienteVerticeAdyacente(actual, vAdy);
+	}
+}
+int caminoEntreTodos(Grafo& grafo) {
+	int conexo = 0;
+	if (!grafo.vacio()) {
+		unordered_set<string> dvv;
+		auto vertActual = grafo.primerVertice();
+		caminoEntreTodosR(grafo, vertActual, dvv);
+		conexo = (dvv.size() == grafo.numVertices());
+	}
+	return conexo;
+}
+
 //----- FIN ALGORITMOS -----
 
 void operadoresBasicos(Grafo& g) {
@@ -610,7 +611,11 @@ void algoritmos(Grafo& g) {
 			_getch();
 			break;
 		case 4:
-			//iv.Dijkstra.
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
+			dijkstra(g);
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 5:
 			system("cls");
@@ -626,7 +631,11 @@ void algoritmos(Grafo& g) {
 			//vii.Colorear el grafo, usando la menor cantidad de colores posible.
 			break;
 		case 8:
-			//viii.Prim
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
+			floyd(g);
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 9:
 			//ix.Kruskal
