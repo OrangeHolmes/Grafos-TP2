@@ -206,7 +206,7 @@ int determinarMin(vector<double> & valores, vector<bool> & recorridos) {
 }
 
 // iv. Dijkstra.
-void dijkstra(Grafo grafo, Grafo::vertice inicio) {
+void dijkstra(Grafo & grafo, Grafo::vertice inicio) {
 	vector<double> valoresMinimos;
 	vector<string> masCercano;
 	vector<bool> recorridos;
@@ -247,6 +247,42 @@ void dijkstra(Grafo grafo, Grafo::vertice inicio) {
 	}
 }
 
+//viii. Prim
+void prim(Grafo & grafo) {
+	vector<double> menorCosto;
+	vector<string> masCercano;
+	vector<bool> recorridos;
+	map<int, Grafo::vertice> relacion;
+	Grafo::vertice verticeActual = grafo.primerVertice();
+
+	for (int i = 0; i < grafo.numVertices(); ++i) {
+		relacion.insert(pair<int, Grafo::vertice>(i, verticeActual));
+		menorCosto.push_back(double(1000000.0));
+		masCercano.push_back("-");
+		recorridos.push_back(false);
+		verticeActual = grafo.siguienteVertice(verticeActual);
+	}
+	menorCosto[0] = 0;
+
+	for (int j = 0; j < grafo.numVertices() - 1; ++j) {
+		int min = determinarMin(menorCosto, recorridos);
+		recorridos[min] = true;
+		Grafo::vertice vMin = relacion[min];
+
+		for (int k = 0; k < grafo.numVertices(); ++k) {
+			Grafo::vertice vK = relacion[k];
+			if (!recorridos[k] && grafo.existeArista(vMin,vK) ){
+				if (grafo.peso(vMin, vK) < menorCosto[k]) {    //si el peso de la arista j,k es menor a el valor al que se llegaba a k, se modifica el valor
+					menorCosto[k] = grafo.peso(vMin, vK);
+					masCercano[k] = grafo.getEtiqueta(vMin);
+				}
+			}
+		}
+	}
+	for (int i = 1; i < menorCosto.size(); ++i) {
+		cout << "Llegamos al vertice " <<grafo.getEtiqueta(relacion[i])<< ", a partir del vertice "<< masCercano[i] << ", con un valor de "<< menorCosto[i] << endl;
+	}
+}
 //----- FIN ALGORITMOS -----
 
 void operadoresBasicos(Grafo& g) {
