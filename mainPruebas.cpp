@@ -38,7 +38,7 @@ void anchoPrimero(Grafo & grafo) {
 			while (!cola.empty()) {
 				Grafo::vertice verticeP = cola.front(); 
 				cola.pop();
-				cout << grafo.getEtiqueta(verticeP) << " ";
+				//cout << grafo.getEtiqueta(verticeP) << " ";
 				Grafo::vertice verticeAdy = grafo.primerVerticeAdyacente(verticeP);
 				while (grafo.verticeValido(verticeAdy)) {
 					if (!dvv.count(grafo.getEtiqueta(verticeAdy))) {
@@ -56,7 +56,7 @@ void anchoPrimero(Grafo & grafo) {
 //ii. Recorrido en Profundidad Primero para despliegue de etiquetas en pantalla.	-*-*- SIRVE
 void profPrimeroR(Grafo& grafo, Grafo::vertice& actual, unordered_set<string>& dvv) {
 	dvv.insert(grafo.getEtiqueta(actual));
-	cout << grafo.getEtiqueta(actual);
+	//cout << grafo.getEtiqueta(actual);
 	auto vAdy = grafo.primerVerticeAdyacente(actual);
 	while (grafo.verticeValido(vAdy)) {
 		if (dvv.count(grafo.getEtiqueta(vAdy)) == 0) {
@@ -198,28 +198,28 @@ int main()
 	Grafo g2 = Grafo();
 	Grafo g3 = Grafo();
 	auto inicio = chrono::steady_clock::now();
-	for (int i = 0; i < 1000; ++i) {
+	for (int i = 0; i < 500; ++i) {
 		g1.agregarVertice(to_string(i));
 	}
 	auto fin = chrono::steady_clock::now();
-	cout << "Agregar 1k:"
+	cout << "Agregar 500:"
 		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
 		<< " milisegundos" << endl;
 
 	inicio = chrono::steady_clock::now();
-	for (int i = 0; i < 10000; ++i) {
+	for (int i = 0; i < 1000; ++i) {
 		g2.agregarVertice(to_string(i));
 	}
 	fin = chrono::steady_clock::now();
-	cout << "Agregar 10k:"
+	cout << "Agregar 1000:"
 		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
 		<< " milisegundos" << endl;
 	inicio = chrono::steady_clock::now();
-	for (int i = 0; i < 100000; ++i) {
+	for (int i = 0; i < 2000; ++i) {
 		g3.agregarVertice(to_string(i));
 	}
 	fin = chrono::steady_clock::now();
-	cout << "Agregar 100k:"
+	cout << "Agregar 2000:"
 		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
 		<< " milisegundos" << endl;
 
@@ -232,36 +232,110 @@ int main()
 	Grafo::vertice v33;
 
 	inicio = chrono::steady_clock::now();
-	for (int i = 0; i < 1000; ++i) {
-		v1 = traducir(g1, to_string(rand()%1000));
-		v11 = traducir(g1,to_string(rand() % 1000));
-		g1.agregarArista(v1,v11,5.0);
+	for (int i = 0; i < 499; ++i) {
+		v1 = traducir(g1, to_string(i));
+		v11 = traducir(g1,to_string(i+1));
+		g1.agregarArista(v1,v11,4.0);
 	}
 	fin = chrono::steady_clock::now();
-	cout << "Aristas 1k:"
+	cout << "Aristas 500:"
 		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
 		<< " milisegundos" << endl;
 
 	inicio = chrono::steady_clock::now();
-	for (int i = 0; i < 10000; ++i) {
-		v2 = traducir(g2, to_string(rand() % 10000));
-		v22 = traducir(g2, to_string(rand() % 10000));
-		g2.agregarArista(v2, v22, 5.0);
+	for (int i = 0; i < 999; ++i) {
+		v2 = traducir(g2, to_string(i));
+		v22 = traducir(g2, to_string(i + 1));
+		g2.agregarArista(v2, v22, 4.0);
 	}
 	fin = chrono::steady_clock::now();
-	cout << "Aristas 10k:"
+	cout << "Aristas 40:"
 		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
 		<< " milisegundos" << endl;
 	inicio = chrono::steady_clock::now();
-	for (int i = 0; i < 100000; ++i) {
-		v3 = traducir(g3, to_string(rand() % 100000));
-		v33 = traducir(g3, to_string(rand() % 100000));
-		g3.agregarArista(v3, v33, 5.0);
+	for (int i = 0; i < 1999; ++i) {
+		v3 = traducir(g3, to_string(i));
+		v33 = traducir(g3, to_string(i + 1));
+		g3.agregarArista(v3, v33, 4.0);
 	}
 	fin = chrono::steady_clock::now();
-	cout << "Aristas 100k:"
+	cout << "Aristas 80:"
 		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
 		<< " milisegundos" << endl;
+
+
+
+	inicio = chrono::steady_clock::now();
+	profPrimero(g1);
+	fin = chrono::steady_clock::now();
+	cout << "prof Primero 20:"
+		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+		<< " milisegundos" << endl;
+	inicio = chrono::steady_clock::now();
+	profPrimero(g2);
+	fin = chrono::steady_clock::now();
+	cout << "prof Primero 40:"
+		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+		<< " milisegundos" << endl;
+	inicio = chrono::steady_clock::now();
+	profPrimero(g3);
+	fin = chrono::steady_clock::now();
+	cout << "prof Primero 80:"
+		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+		<< " milisegundos" << endl;
+
+
+
+	inicio = chrono::steady_clock::now();
+	anchoPrimero(g1);
+	fin = chrono::steady_clock::now();
+	cout << "ancho Primero 20:"
+		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+		<< " milisegundos" << endl;
+	inicio = chrono::steady_clock::now();
+	anchoPrimero(g2);
+	fin = chrono::steady_clock::now();
+	cout << "ancho Primero 40:"
+		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+		<< " milisegundos" << endl;
+	inicio = chrono::steady_clock::now();
+	anchoPrimero(g3);
+	fin = chrono::steady_clock::now();
+	cout << "ancho Primero 80:"
+		<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+		<< " milisegundos" << endl;
+
+	//inicio = chrono::steady_clock::now();
+	//for (int i = 0; i < 499; ++i) {
+	//	v1 = traducir(g1, to_string(i));
+	//	v11 = traducir(g1, to_string(i + 1));
+	//	g1.eliminarArista(v1, v11);
+	//}
+	//fin = chrono::steady_clock::now();
+	//cout << "Borrar Aristas 500:"
+	//	<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+	//	<< " milisegundos" << endl;
+
+	//inicio = chrono::steady_clock::now();
+	//for (int i = 0; i < 999; ++i) {
+	//	v2 = traducir(g2, to_string(i));
+	//	v22 = traducir(g2, to_string(i + 1));
+	//	g2.eliminarArista(v2, v22);
+	//}
+	//fin = chrono::steady_clock::now();
+	//cout << "Borrar Aristas 1k:"
+	//	<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+	//	<< " milisegundos" << endl;
+	//inicio = chrono::steady_clock::now();
+	//for (int i = 0; i < 1999; ++i) {
+	//	v3 = traducir(g3, to_string(i));
+	//	v33 = traducir(g3, to_string(i + 1));
+	//	g3.eliminarArista(v3, v33);
+	//}
+	//fin = chrono::steady_clock::now();
+	//cout << "Borrar Aristas 2k:"
+	//	<< chrono::duration_cast<chrono::milliseconds>(fin - inicio).count()
+	//	<< " milisegundos" << endl;
 
 
 	cin.ignore();
