@@ -216,6 +216,67 @@ void floyd(Grafo g) {
 	delete[]matrizCostos;
 }
 
+//vi. Encontrar Circuito de Hamilton de Menor Costo.
+bool circHamiltonValido(Grafo& g, Grafo::vertice pv, int pos, vector<Grafo::vertice>& solAct) {
+	for (int i = 0; i < pos; ++i) {
+		if (solAct[i] == pv) {
+			return false;
+		}
+	}
+	return true;
+}
+void circuitoHamiltonR(Grafo& g, Grafo::vertice vu, int e, vector<Grafo::vertice>& solucionActual, double costoActual, vector<Grafo::vertice>& mejorSolucion, double mejorCosto) {
+	int solSize = solucionActual.size();
+	Grafo::vertice v = g.primerVerticeAdyacente(vu);
+	while (g.verticeValido(v)) {
+		if (circHamiltonValido(g, v, e, solucionActual)) {
+			solucionActual[e] = v;
+			costoActual += g.peso(v, vu);
+			if (e == solSize - 1)
+			{
+				if (g.existeArista(v, solucionActual[0]))
+				{
+					costoActual += g.peso(v, solucionActual[0]);
+					if (costoActual < mejorCosto) {
+						mejorCosto = costoActual;
+						mejorSolucion = solucionActual;
+					}
+					costoActual = costoActual - g.peso(v, solucionActual[0]);
+				}
+			}
+			else if (costoActual < mejorCosto)
+			{
+				circuitoHamiltonR(g, v, e + 1, solucionActual, costoActual, mejorSolucion, mejorCosto);
+			}
+			//Arrepentimiento
+			costoActual = costoActual - g.peso(v, vu);
+			solucionActual[e] = 0;
+		}
+		v = g.siguienteVerticeAdyacente(vu, v);
+	}
+}
+void circuitoHamilton(Grafo& g) {
+	int nv = g.numVertices();
+	vector<Grafo::vertice>solAct;
+	vector<Grafo::vertice>mejSol;
+	solAct.resize(nv);
+	mejSol.resize(nv);
+	double maxP = FLT_MAX;
+	double mejorCosto = maxP;
+	Grafo::vertice vp = g.primerVertice();
+	solAct[0] = vp;
+	circuitoHamiltonR(g, g.primerVertice(), 1, solAct, 0, mejSol, mejorCosto);
+	if (!mejSol[0]) {
+		std::cout << "No se encontro circuito" << endl;
+	}
+	else {
+		for (int i = 0; i < nv; i++) {
+			std::cout << g.getEtiqueta(mejSol[i]) << " ";
+		}
+		std::cout << " Costo: " << mejorCosto << endl;
+	}
+}
+
 //viii. Prim
 void prim(Grafo & grafo) {
 	vector<double> menorCosto;
@@ -611,9 +672,15 @@ void algoritmos(Grafo& g) {
 			_getch();
 			break;
 		case 4:
-			system("cls");
-			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
-			dijkstra(g);
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n -Desde que vertice desea Dijkstra?: ";
+			cin >> eti;
+			v1 = traducir(g, eti);
+			if (g.verticeValido(v1)) {
+				dijkstra(g, v1);
+			}
+			else {
+				cout << "\n El vertice no existe!";
+			}
 			cout << "\n\n\tPulsa una tecla para continuar...";
 			_getch();
 			break;
@@ -625,10 +692,17 @@ void algoritmos(Grafo& g) {
 			_getch();
 			break;
 		case 6:
-			//vi.Encontrar Circuito de Hamilton de Menor Costo.
+			system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
+			circuitoHamilton(g);
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
-		case 7:
-			//vii.Colorear el grafo, usando la menor cantidad de colores posible.
+		case 7:system("cls");
+			cout << "\n\t ---- Grafo No Dirigido ---\n\n ";
+			//vii.Colorear el grafo, usando la menor cantidad de colores posible.		
+			cout << "\n\n\tPulsa una tecla para continuar...";
+			_getch();
 			break;
 		case 8:
 			system("cls");
